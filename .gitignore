@@ -83,3 +83,5 @@ temp/
 # Backup files
 *.bak
 *.backup
+
+/screenshots/*
