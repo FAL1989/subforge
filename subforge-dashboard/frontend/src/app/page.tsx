@@ -30,7 +30,11 @@ interface DashboardData {
 }
 
 export default function Dashboard() {
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
+  const [dashboardData, setDashboardData] = useState<DashboardData>({
+    agents: { total: 0, active: 0, idle: 0, error: 0 },
+    tasks: { completed: 0, pending: 0, failed: 0, total: 0 },
+    system: { uptime: 0, cpu: 0, memory: 0, connections: 0 }
+  })
   const [loading, setLoading] = useState(true)
   const { isConnected, data } = useWebSocket()
 
@@ -60,7 +64,7 @@ export default function Dashboard() {
   // Update data with WebSocket updates
   useEffect(() => {
     if (data && data.type === 'dashboard_update') {
-      setDashboardData(prev => prev ? { ...prev, ...data.payload } : null)
+      setDashboardData(prev => ({ ...prev, ...data.payload }))
     }
   }, [data])
 
@@ -68,16 +72,6 @@ export default function Dashboard() {
     return (
       <div className="flex items-center justify-center h-64">
         <LoadingSpinner size="lg" />
-      </div>
-    )
-  }
-
-  if (!dashboardData) {
-    return (
-      <div className="text-center py-12">
-        <h2 className="text-xl font-semibold text-gray-600 dark:text-gray-400">
-          Failed to load dashboard data
-        </h2>
       </div>
     )
   }

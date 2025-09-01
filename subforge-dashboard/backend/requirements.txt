@@ -16,6 +16,9 @@ aioredis==2.0.1
 
 # WebSocket support
 websockets==12.0
+python-socketio[asyncio]==5.10.0
+python-socketio>=5.10.0
+python-engineio==4.9.0
 
 # HTTP and File handling
 httpx==0.25.2
