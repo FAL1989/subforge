@@ -1,0 +1,29 @@
+{
+  "name": "Claude-subagents",
+  "path": "/home/nando/projects/Claude-subagents",
+  "technology_stack": {
+    "languages": [
+      "markdown",
+      "json",
+      "python"
+    ],
+    "frameworks": [],
+    "databases": [],
+    "tools": [],
+    "package_managers": []
+  },
+  "architecture_pattern": "microservices",
+  "complexity": "simple",
+  "team_size_estimate": 2,
+  "file_count": 12,
+  "lines_of_code": 736,
+  "has_tests": false,
+  "has_ci_cd": false,
+  "has_docker": false,
+  "has_docs": true,
+  "recommended_subagents": [
+    "code-reviewer",
+    "devops-engineer"
+  ],
+  "integration_requirements": []
+}
