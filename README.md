@@ -103,7 +103,7 @@ subforge init my-react-app
 ### Installation
 ```bash
 # Clone repository
-git clone https://github.com/subforge/subforge.git
+git clone https://github.com/FAL1989/subforge.git
 cd subforge
 
 # Run demo
@@ -171,8 +171,8 @@ SubForge is **blazingly fast**:
 We ❤️ contributions! SubForge is community-driven.
 
 ### Ways to Contribute:
-- 🐛 **Bug Reports**: Found an issue? [Open an issue](https://github.com/subforge/subforge/issues)
-- 💡 **Feature Requests**: Have an idea? [Start a discussion](https://github.com/subforge/subforge/discussions)
+- 🐛 **Bug Reports**: Found an issue? [Open an issue](https://github.com/FAL1989/subforge/issues)
+- 💡 **Feature Requests**: Have an idea? [Start a discussion](https://github.com/FAL1989/subforge/discussions)
 - 🎨 **Templates**: Create and share subagent templates
 - 💻 **Code**: Help build the future of AI-powered development
 - 📖 **Documentation**: Improve docs and examples
@@ -180,7 +180,7 @@ We ❤️ contributions! SubForge is community-driven.
 ### Development Setup:
 ```bash
 # Clone the repo
-git clone https://github.com/subforge/subforge.git
+git clone https://github.com/FAL1989/subforge.git
 cd subforge
 
 # Run demo
@@ -200,9 +200,10 @@ python3 subforge/simple_cli.py --help
 
 ## 💬 **Community**
 
-- 💬 **GitHub Discussions** - Questions, ideas, showcase
-- 🐛 **Issues** - Bug reports and feature requests  
+- 💬 **[GitHub Discussions](https://github.com/FAL1989/subforge/discussions)** - Questions, ideas, showcase
+- 🐛 **[Issues](https://github.com/FAL1989/subforge/issues)** - Bug reports and feature requests  
 - 🎉 **Show & Tell** - Share your SubForge setups
+- ⭐ **[Star the project](https://github.com/FAL1989/subforge)** - Show your support!
 
 ## 🙏 **Acknowledgments**
 
