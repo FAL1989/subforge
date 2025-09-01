@@ -74,6 +74,7 @@ Thumbs.db
 # SubForge specific
 .subforge/
 test_validation.json
+subforge_analysis.json
 *.log
 
 # Temporary files
@@ -90,3 +91,7 @@ temp/
 *.backup
 
 /screenshots/*
+.playwright-mcp/
+transcrição-video-youtube.md
+README-SUBFORGE.md
+PLANO-FABRICA-SUBAGENTS.md
