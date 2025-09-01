@@ -38,6 +38,30 @@ black==23.11.0
 flake8==6.1.0
 mypy==1.7.1
 
+# Background task processing
+celery==5.3.4
+kombu==5.3.4
+
+# Rate limiting and caching
+slowapi==0.1.9
+python-multipart==0.0.6
+
+# File uploads and validation  
+python-magic==0.4.27
+Pillow==10.1.0
+
+# Event sourcing and message queuing
+asyncio-mqtt==0.16.1
+
+# Data Science and Analytics
+pandas==2.1.4
+numpy==1.25.2
+scikit-learn==1.3.2
+scipy==1.11.4
+matplotlib==3.8.2
+seaborn==0.13.0
+plotly==5.17.0
+
 # Additional utilities
 python-dotenv==1.0.0
 rich==13.7.0
