@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: subforge
+  labels:
+    name: subforge
+    app.kubernetes.io/name: subforge
+    app.kubernetes.io/version: "1.0.0"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: subforge-staging
+  labels:
+    name: subforge-staging
+    app.kubernetes.io/name: subforge
+    app.kubernetes.io/version: "1.0.0"
+    environment: staging
