@@ -10,6 +10,25 @@ interface AgentMetricsProps {
 }
 
 export function AgentMetrics({ data }: AgentMetricsProps) {
+  // Handle empty or undefined data
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            Agent Performance Details
+          </h3>
+          <div className="text-sm text-gray-600 dark:text-gray-400">
+            Ranked by success rate
+          </div>
+        </div>
+        <div className="flex items-center justify-center h-[240px] text-gray-500 dark:text-gray-400">
+          No agent metrics available
+        </div>
+      </div>
+    )
+  }
+
   const sortedData = [...data].sort((a, b) => b.successRate - a.successRate)
 
   const getPerformanceLevel = (successRate: number) => {
@@ -143,25 +162,29 @@ export function AgentMetrics({ data }: AgentMetricsProps) {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
           <div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
-              {data.filter(agent => agent.successRate >= 95).length}
+              {data && Array.isArray(data) ? data.filter(agent => agent.successRate >= 95).length : 0}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">Excellent Performers</p>
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
-              {Math.round(data.reduce((acc, agent) => acc + agent.successRate, 0) / data.length)}%
+              {data && Array.isArray(data) && data.length > 0 
+                ? Math.round(data.reduce((acc, agent) => acc + agent.successRate, 0) / data.length)
+                : 0}%
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">Average Success Rate</p>
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
-              {(data.reduce((acc, agent) => acc + agent.avgResponseTime, 0) / data.length).toFixed(1)}s
+              {data && Array.isArray(data) && data.length > 0 
+                ? (data.reduce((acc, agent) => acc + agent.avgResponseTime, 0) / data.length).toFixed(1)
+                : 0.0}s
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">Average Response Time</p>
           </div>
           <div>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
-              {data.reduce((acc, agent) => acc + agent.tasksCompleted, 0)}
+              {data && Array.isArray(data) ? data.reduce((acc, agent) => acc + agent.tasksCompleted, 0) : 0}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">Total Tasks Completed</p>
           </div>

@@ -2,6 +2,7 @@
 
 import { Bell, Search, Sun, Moon, User } from 'lucide-react'
 import { useTheme } from '@/components/providers/theme-provider'
+import { ConnectionStatus } from '@/components/ui/connection-status'
 import { useState } from 'react'
 
 export function Header() {
@@ -29,6 +30,9 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center space-x-4">
+          {/* Connection Status */}
+          <ConnectionStatus className="mr-2" />
+          
           {/* Theme Toggle */}
           <button
             onClick={toggleTheme}

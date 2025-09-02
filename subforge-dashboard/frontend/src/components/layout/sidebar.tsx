@@ -10,13 +10,15 @@ import {
   Clock, 
   Settings,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Activity
 } from 'lucide-react'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: Home },
+  { name: 'Workflows', href: '/workflows', icon: Activity },
   { name: 'Agents', href: '/agents', icon: Users },
   { name: 'Tasks', href: '/tasks', icon: Kanban },
   { name: 'Metrics', href: '/metrics', icon: BarChart3 },

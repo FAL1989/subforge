@@ -22,6 +22,20 @@ interface PerformanceChartProps {
 }
 
 export function PerformanceChart({ title, data }: PerformanceChartProps) {
+  // Handle empty or undefined data
+  if (!data || data.length === 0) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          {title}
+        </h3>
+        <div className="flex items-center justify-center h-[300px] text-gray-500 dark:text-gray-400">
+          No performance data available
+        </div>
+      </div>
+    )
+  }
+
   const getBarColor = (successRate: number) => {
     if (successRate >= 95) return '#10b981' // green
     if (successRate >= 90) return '#f59e0b' // yellow
@@ -88,7 +102,7 @@ export function PerformanceChart({ title, data }: PerformanceChartProps) {
             formatter={formatTooltip}
           />
           <Bar dataKey="successRate" radius={[4, 4, 0, 0]}>
-            {data.map((entry, index) => (
+            {data && data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={getBarColor(entry.successRate)} />
             ))}
           </Bar>

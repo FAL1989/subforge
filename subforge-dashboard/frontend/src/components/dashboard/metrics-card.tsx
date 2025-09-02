@@ -4,15 +4,16 @@ import {
   Cpu, 
   HardDrive, 
   TrendingUp, 
-  TrendingDown 
+  TrendingDown,
+  Activity 
 } from 'lucide-react'
 
 interface MetricsCardProps {
   title: string
-  value: number
-  total?: number
+  value: number | string
+  total?: number | string
   trend?: string
-  icon: 'users' | 'check-circle' | 'cpu' | 'hard-drive'
+  icon: 'users' | 'check-circle' | 'cpu' | 'hard-drive' | 'activity'
   color: 'blue' | 'green' | 'orange' | 'purple'
   suffix?: string
 }
@@ -22,6 +23,7 @@ const icons = {
   'check-circle': CheckCircle,
   cpu: Cpu,
   'hard-drive': HardDrive,
+  activity: Activity,
 }
 
 const colorClasses = {
@@ -89,7 +91,7 @@ export function MetricsCard({
           )}
         </div>
         
-        {total && (
+        {total && typeof value === 'number' && typeof total === 'number' && (
           <div className="mt-3">
             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
               <div

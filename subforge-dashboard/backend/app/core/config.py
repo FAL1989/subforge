@@ -5,7 +5,8 @@ Core configuration settings for the SubForge Dashboard Backend
 import os
 from pathlib import Path
 from typing import Optional, List, Union
-from pydantic import BaseSettings, validator
+from pydantic import validator
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -45,10 +46,10 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     
     # SubForge specific paths
-    SUBFORGE_ROOT: Path = Path.cwd()
-    CLAUDE_DIR: Path = Path.cwd() / ".claude"
-    SUBFORGE_DIR: Path = Path.cwd() / ".subforge"
-    AGENTS_DIR: Path = Path.cwd() / ".claude" / "agents"
+    SUBFORGE_ROOT: Path = Path.cwd().parent.parent  # Go up from backend/subforge-dashboard to Claude-subagents
+    CLAUDE_DIR: Path = Path.cwd().parent.parent / ".claude"
+    SUBFORGE_DIR: Path = Path.cwd().parent.parent / ".subforge"
+    AGENTS_DIR: Path = Path.cwd().parent.parent / ".claude" / "agents"
     
     # File watching
     ENABLE_FILE_WATCHER: bool = True

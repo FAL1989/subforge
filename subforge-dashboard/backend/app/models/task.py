@@ -36,7 +36,7 @@ class Task(Base):
     # Task details
     task_type = Column(String(100), nullable=True, index=True)
     tags = Column(JSON, nullable=False, default=list)
-    metadata = Column(JSON, nullable=False, default=dict)
+    task_metadata = Column(JSON, nullable=False, default=dict)
     
     # Time tracking
     estimated_duration_minutes = Column(Integer, nullable=True)
@@ -86,7 +86,7 @@ class Task(Base):
             "workflow_id": str(self.workflow_id) if self.workflow_id else None,
             "task_type": self.task_type,
             "tags": self.tags,
-            "metadata": self.metadata,
+            "metadata": self.task_metadata,
             "time_tracking": {
                 "estimated_duration_minutes": self.estimated_duration_minutes,
                 "actual_duration_minutes": self.actual_duration_minutes,

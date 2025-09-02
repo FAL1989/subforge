@@ -22,6 +22,20 @@ interface SystemMetricsProps {
 }
 
 export function SystemMetrics({ title, data }: SystemMetricsProps) {
+  // Handle empty or undefined data
+  if (!data || data.length === 0) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          {title}
+        </h3>
+        <div className="flex items-center justify-center h-[240px] text-gray-500 dark:text-gray-400">
+          No system metrics available
+        </div>
+      </div>
+    )
+  }
+
   const formatTooltip = (value: any, name: string) => {
     switch (name) {
       case 'cpu':
@@ -43,6 +57,10 @@ export function SystemMetrics({ title, data }: SystemMetricsProps) {
   }
 
   const getHealthStatus = () => {
+    if (!data || data.length === 0) {
+      return { status: 'Unknown', color: 'text-gray-500' }
+    }
+    
     const latestData = data[data.length - 1]
     if (!latestData) return { status: 'Unknown', color: 'text-gray-500' }
     
@@ -57,7 +75,7 @@ export function SystemMetrics({ title, data }: SystemMetricsProps) {
   }
 
   const health = getHealthStatus()
-  const latestData = data[data.length - 1]
+  const latestData = data && data.length > 0 ? data[data.length - 1] : null
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">

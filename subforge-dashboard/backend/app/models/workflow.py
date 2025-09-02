@@ -56,7 +56,7 @@ class Workflow(Base):
     
     # Workflow metadata
     tags = Column(JSON, nullable=False, default=list)
-    metadata = Column(JSON, nullable=False, default=dict)
+    workflow_metadata = Column(JSON, nullable=False, default=dict)
     
     # Status flags
     is_paused = Column(Boolean, nullable=False, default=False)
@@ -107,7 +107,7 @@ class Workflow(Base):
                 "utilization": self.agent_utilization
             },
             "tags": self.tags,
-            "metadata": self.metadata,
+            "metadata": self.workflow_metadata,
             "flags": {
                 "is_paused": self.is_paused,
                 "is_template": self.is_template,

@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
+import socketio
 
 # Import application modules
 from .core.config import settings
@@ -21,6 +22,7 @@ from .database.session import async_engine
 from .database.base import Base
 from .websocket.manager import websocket_manager, websocket_endpoint, periodic_cleanup_task
 from .websocket.enhanced_manager import enhanced_websocket_manager
+from .websocket.socketio_manager import socketio_manager
 from .services.redis_service import redis_service
 from .services.api_enhancement import api_enhancement_service
 from .services.background_tasks import background_task_service
@@ -31,6 +33,18 @@ from .api.v2 import api_v2_router
 # Setup logging
 setup_logging()
 logger = get_logger(__name__)
+
+
+async def socketio_periodic_cleanup():
+    """Periodic cleanup task for Socket.IO connections"""
+    while True:
+        try:
+            await asyncio.sleep(300)  # Run every 5 minutes
+            await socketio_manager.cleanup_disconnected_clients()
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            logger.error(f"Error in Socket.IO cleanup task: {e}")
 
 
 @asynccontextmanager
@@ -47,6 +61,10 @@ async def lifespan(app: FastAPI):
         
         # Initialize enhanced WebSocket manager
         await enhanced_websocket_manager.initialize()
+        
+        # Initialize Socket.IO server
+        socketio_manager.create_server()
+        logger.info("✅ Socket.IO server initialized")
         
         # Initialize API enhancement service
         await api_enhancement_service.initialize()
@@ -73,6 +91,10 @@ async def lifespan(app: FastAPI):
         cleanup_task = asyncio.create_task(periodic_cleanup_task())
         logger.info("✅ WebSocket cleanup task started")
         
+        # Start Socket.IO cleanup task
+        socketio_cleanup_task = asyncio.create_task(socketio_periodic_cleanup())
+        logger.info("✅ Socket.IO cleanup task started")
+        
         # Initialize system data (can be extended later)
         logger.info("✅ System initialization complete")
         
@@ -98,6 +120,14 @@ async def lifespan(app: FastAPI):
             pass
         logger.info("✅ Cleanup task stopped")
         
+        # Cancel Socket.IO cleanup task
+        socketio_cleanup_task.cancel()
+        try:
+            await socketio_cleanup_task
+        except asyncio.CancelledError:
+            pass
+        logger.info("✅ Socket.IO cleanup task stopped")
+        
         # Shutdown services
         await analytics_integration_service.shutdown()
         await enhanced_websocket_manager.shutdown()
@@ -122,6 +152,7 @@ app = FastAPI(
     redoc_url="/redoc" if settings.DEBUG else None,
     openapi_url="/openapi.json" if settings.DEBUG else None
 )
+
 
 # Add CORS middleware
 app.add_middleware(
@@ -182,6 +213,10 @@ async def health_check() -> Dict[str, Any]:
             "file_watcher": file_watcher.get_status(),
             "websocket_manager": {
                 "active_connections": websocket_manager.get_connection_count()
+            },
+            "socketio_manager": {
+                "active_connections": socketio_manager.get_connection_count(),
+                "rooms": len(socketio_manager.room_members)
             }
         }
     }
@@ -284,6 +319,17 @@ async def root() -> Dict[str, Any]:
                     "bulk_operations",
                     "advanced_filtering"
                 ]
+            },
+            "socketio": {
+                "endpoint": "/socket.io/",
+                "status": "active",
+                "features": [
+                    "real_time_messaging",
+                    "room_based_broadcasting",
+                    "auto_reconnection",
+                    "event_based_communication",
+                    "redis_scaling_support"
+                ]
             }
         },
         "services": {
@@ -291,7 +337,8 @@ async def root() -> Dict[str, Any]:
             "background_tasks": "enabled" if settings.ENABLE_BACKGROUND_TASKS else "disabled",
             "file_uploads": "enabled",
             "rate_limiting": "enabled" if settings.ENABLE_RATE_LIMITING else "disabled",
-            "caching": "enabled" if settings.ENABLE_CACHING else "disabled"
+            "caching": "enabled" if settings.ENABLE_CACHING else "disabled",
+            "socketio": "enabled"
         }
     }
 
@@ -320,12 +367,41 @@ if settings.DEBUG:
     async def debug_file_watcher_status():
         """Debug endpoint to check file watcher status"""
         return file_watcher.get_status()
+    
+    @app.get("/debug/socketio")
+    async def debug_socketio_status():
+        """Debug endpoint to check Socket.IO status"""
+        return {
+            "connection_info": socketio_manager.get_connection_info(),
+            "room_members": {
+                room: list(members) for room, members in socketio_manager.room_members.items()
+            }
+        }
+    
+    @app.post("/debug/socketio/broadcast")
+    async def debug_socketio_broadcast(message: Dict[str, Any]):
+        """Debug endpoint to broadcast Socket.IO test messages"""
+        from .websocket.socketio_manager import SocketIOMessage, SocketIOEvent
+        
+        test_message = SocketIOMessage(
+            event=message.get("event", SocketIOEvent.PING),
+            data=message.get("data", {"test": True, "timestamp": "now"})
+        )
+        
+        room = message.get("room")
+        if room:
+            await socketio_manager.broadcast_to_room(room, test_message)
+        else:
+            await socketio_manager.broadcast_to_all(test_message)
+        
+        return {"status": "message_broadcasted", "room": room}
 
 
 # Application metadata
 app.extra = {
     "settings": settings,
     "websocket_manager": websocket_manager,
+    "socketio_manager": socketio_manager,
     "file_watcher": file_watcher
 }
 

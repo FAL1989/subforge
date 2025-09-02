@@ -21,6 +21,20 @@ interface MetricsChartProps {
 }
 
 export function MetricsChart({ title, data, type, height = 300 }: MetricsChartProps) {
+  // Handle empty or undefined data
+  if (!data || data.length === 0) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          {title}
+        </h3>
+        <div className="flex items-center justify-center h-[300px] text-gray-500 dark:text-gray-400">
+          No data available
+        </div>
+      </div>
+    )
+  }
+
   const formatTooltip = (value: any, name: string) => {
     if (name === 'completed' || name === 'failed' || name === 'total') {
       return [`${value} tasks`, name.charAt(0).toUpperCase() + name.slice(1)]
@@ -74,7 +88,7 @@ export function MetricsChart({ title, data, type, height = 300 }: MetricsChartPr
           <Legend />
 
           {/* Task Completion Chart */}
-          {data[0]?.completed !== undefined && (
+          {data && data.length > 0 && data[0]?.completed !== undefined && (
             <>
               {type === 'area' ? (
                 <>
@@ -117,7 +131,7 @@ export function MetricsChart({ title, data, type, height = 300 }: MetricsChartPr
           )}
 
           {/* Productivity Chart */}
-          {data[0]?.tasksPerHour !== undefined && (
+          {data && data.length > 0 && data[0]?.tasksPerHour !== undefined && (
             <>
               {type === 'area' ? (
                 <>
