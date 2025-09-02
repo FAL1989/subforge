@@ -100,7 +100,21 @@ subforge init my-react-app
 - [Claude Code](https://claude.ai/code) installed
 - Python 3.9+
 
-### Installation
+### Installation via pip
+
+#### Quick Install
+```bash
+# Install SubForge (basic version)
+pip install subforge
+
+# Install with rich CLI interface
+pip install subforge[rich]
+
+# Install for development
+pip install -e .[dev]
+```
+
+#### Install from source
 ```bash
 # Clone repository
 git clone https://github.com/FAL1989/subforge.git
