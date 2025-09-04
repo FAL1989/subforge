@@ -93,7 +93,7 @@ Special thanks to the Claude Code community for inspiration and feedback. This r
 
 ---
 
-## [1.0.0] - 2024-12-04
+## [1.0.0] - 2025-09-01
 
 ### Initial Release
 - SubForge intelligent agent configuration system
