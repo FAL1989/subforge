@@ -61,14 +61,14 @@ class ClaudeConfigGenerator:
         config = f"""# {profile.name} - Claude Code Agent Configuration
 
 **Project Root**: {profile.path}
-**Languages**: {', '.join(profile.languages)}
-**Frameworks**: {', '.join(profile.frameworks)}
-**Technologies**: {', '.join(profile.technologies)}
+**Languages**: {', '.join(sorted(profile.technology_stack.languages))}
+**Frameworks**: {', '.join(sorted(profile.technology_stack.frameworks))}
+**Technologies**: {', '.join(sorted(profile.technology_stack.tools))}
 
 ## Available Specialist Agents
 
 """
-        for template_name in selected_templates:
+        for template_name in (selected_templates or []):
             agent_key = template_name.replace(" ", "-").lower()
             config += f"**@{agent_key}**\n"
             config += f"- Specialized agent for {template_name}\n\n"
