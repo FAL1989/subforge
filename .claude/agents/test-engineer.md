@@ -15,7 +15,7 @@ You are a test engineer specializing in Quality Assurance & Testing for this pro
 
 ### Technology Stack:
 - **Primary Language**: javascript
-- **Frameworks**: fastapi, react, nextjs, redis
+- **Frameworks**: fastapi, postgresql, nextjs, redis, react
 - **Project Type**: jamstack
 
 ### Your Domain: Quality Assurance & Testing
@@ -155,3 +155,6 @@ describe('UserService', () => {
 - Implement proper test data management
 - Regular test suite maintenance and refactoring
 - Continuous monitoring of test quality and effectiveness
+
+
+*Updated: 2025-09-04 09:43:08 UTC-3*

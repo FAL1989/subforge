@@ -2,13 +2,12 @@
 Simplified FastAPI app with Socket.IO support for testing
 """
 
+import logging
+from datetime import datetime, timedelta
+
+import socketio
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
-import socketio
-import logging
-import asyncio
-from datetime import datetime, timedelta
-from typing import List, Optional
 
 # Import SubForge integration
 try:
@@ -26,16 +25,16 @@ logger = logging.getLogger(__name__)
 # Create Socket.IO server
 sio = socketio.AsyncServer(
     cors_allowed_origins=["http://localhost:3001"],
-    async_mode='asgi',
+    async_mode="asgi",
     logger=True,
-    engineio_logger=True
+    engineio_logger=True,
 )
 
 # Create FastAPI app
 app = FastAPI(
     title="SubForge Dashboard Backend",
     description="Simplified backend with Socket.IO support",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # Add CORS middleware
@@ -53,49 +52,58 @@ app.include_router(subforge_router)
 # Create ASGI app with Socket.IO
 socket_app = socketio.ASGIApp(sio, app)
 
+
 # Socket.IO event handlers
 @sio.event
 async def connect(sid, environ):
     logger.info(f"Client connected: {sid}")
-    await sio.emit('connected', {'message': 'Connected to SubForge Dashboard'}, to=sid)
+    await sio.emit("connected", {"message": "Connected to SubForge Dashboard"}, to=sid)
     # No return value needed for async handlers
+
 
 @sio.event
 async def disconnect(sid):
     logger.info(f"Client disconnected: {sid}")
 
+
 @sio.event
 async def agent_status_update(sid, data):
     logger.info(f"Agent status update from {sid}: {data}")
     # Broadcast to all clients
-    await sio.emit('agent_status_update', data)
+    await sio.emit("agent_status_update", data)
+
 
 @sio.event
 async def task_update(sid, data):
     logger.info(f"Task update from {sid}: {data}")
-    await sio.emit('task_update', data)
+    await sio.emit("task_update", data)
+
 
 @sio.event
 async def system_metrics_update(sid, data):
     logger.info(f"System metrics update from {sid}: {data}")
-    await sio.emit('system_metrics_update', data)
+    await sio.emit("system_metrics_update", data)
+
 
 @sio.event
 async def workflow_event(sid, data):
     logger.info(f"Workflow event from {sid}: {data}")
-    await sio.emit('workflow_event', data)
+    await sio.emit("workflow_event", data)
+
 
 @sio.event
 async def join_room(sid, room):
     sio.enter_room(sid, room)
     logger.info(f"Client {sid} joined room: {room}")
-    await sio.emit('room_joined', {'room': room}, to=sid)
+    await sio.emit("room_joined", {"room": room}, to=sid)
+
 
 @sio.event
 async def leave_room(sid, room):
     sio.leave_room(sid, room)
     logger.info(f"Client {sid} left room: {room}")
-    await sio.emit('room_left', {'room': room}, to=sid)
+    await sio.emit("room_left", {"room": room}, to=sid)
+
 
 # Regular HTTP endpoints
 @app.get("/")
@@ -104,95 +112,121 @@ async def root():
         "message": "SubForge Dashboard Backend (Simplified)",
         "status": "running",
         "socket_io": "enabled",
-        "cors": "configured for http://localhost:3001"
+        "cors": "configured for http://localhost:3001",
     }
+
 
 @app.get("/health")
 async def health():
-    return {
-        "status": "healthy",
-        "socket_io": "active"
-    }
+    return {"status": "healthy", "socket_io": "active"}
+
 
 @app.get("/api/dashboard/overview")
 async def dashboard_overview():
     """Return dashboard overview data"""
     return {
-        "agents": {
-            "total": 6,
-            "active": 4,
-            "idle": 1,
-            "error": 1
-        },
-        "tasks": {
-            "completed": 145,
-            "pending": 8,
-            "failed": 2,
-            "total": 155
-        },
-        "system": {
-            "uptime": 86400,
-            "cpu": 45,
-            "memory": 68,
-            "connections": 12
-        }
+        "agents": {"total": 6, "active": 4, "idle": 1, "error": 1},
+        "tasks": {"completed": 145, "pending": 8, "failed": 2, "total": 155},
+        "system": {"uptime": 86400, "cpu": 45, "memory": 68, "connections": 12},
     }
 
+
 @app.get("/api/metrics")
-async def get_metrics(time_range: str = Query(default="7d", alias="range", description="Time range: 24h, 7d, 30d, 90d")):
+async def get_metrics(
+    time_range: str = Query(
+        default="7d", alias="range", description="Time range: 24h, 7d, 30d, 90d"
+    )
+):
     """Return metrics data with time range support"""
     # Generate mock data based on time range
     days = {"24h": 1, "7d": 7, "30d": 30, "90d": 90}.get(time_range, 7)
     base_date = datetime.now() - timedelta(days=days)
-    
+
     # Generate task completion data
     task_completion = []
     for i in range(days):
         date = base_date + timedelta(days=i)
         completed = 15 + (i * 2) + (i % 3)
         failed = max(1, i % 4)
-        task_completion.append({
-            "date": date.strftime("%Y-%m-%d"),
-            "completed": completed,
-            "failed": failed,
-            "total": completed + failed
-        })
-    
+        task_completion.append(
+            {
+                "date": date.strftime("%Y-%m-%d"),
+                "completed": completed,
+                "failed": failed,
+                "total": completed + failed,
+            }
+        )
+
     # Generate system health data (last 24 data points)
     system_health = []
     for i in range(24):
-        timestamp = datetime.now() - timedelta(hours=23-i)
-        system_health.append({
-            "timestamp": timestamp.isoformat() + "Z",
-            "cpu": 35 + (i * 2) + (i % 10),
-            "memory": 45 + (i * 1.5) + (i % 8),
-            "activeConnections": 8 + (i % 12)
-        })
-    
+        timestamp = datetime.now() - timedelta(hours=23 - i)
+        system_health.append(
+            {
+                "timestamp": timestamp.isoformat() + "Z",
+                "cpu": 35 + (i * 2) + (i % 10),
+                "memory": 45 + (i * 1.5) + (i % 8),
+                "activeConnections": 8 + (i % 12),
+            }
+        )
+
     # Generate productivity data
     productivity = []
     for i in range(days):
         date = base_date + timedelta(days=i)
-        productivity.append({
-            "date": date.strftime("%Y-%m-%d"),
-            "tasksPerHour": 1.8 + (i * 0.2),
-            "agentsActive": min(6, 4 + (i % 3)),
-            "efficiency": 78 + (i * 2) + (i % 5)
-        })
-    
+        productivity.append(
+            {
+                "date": date.strftime("%Y-%m-%d"),
+                "tasksPerHour": 1.8 + (i * 0.2),
+                "agentsActive": min(6, 4 + (i % 3)),
+                "efficiency": 78 + (i * 2) + (i % 5),
+            }
+        )
+
     return {
         "taskCompletion": task_completion,
         "agentPerformance": [
-            {"agentName": "Frontend Developer", "successRate": 96, "avgResponseTime": 1.2, "tasksCompleted": 23},
-            {"agentName": "Backend Developer", "successRate": 94, "avgResponseTime": 2.1, "tasksCompleted": 18},
-            {"agentName": "Code Reviewer", "successRate": 99, "avgResponseTime": 1.8, "tasksCompleted": 31},
-            {"agentName": "Data Scientist", "successRate": 98, "avgResponseTime": 3.5, "tasksCompleted": 12},
-            {"agentName": "DevOps Engineer", "successRate": 92, "avgResponseTime": 4.2, "tasksCompleted": 8},
-            {"agentName": "Test Engineer", "successRate": 88, "avgResponseTime": 2.5, "tasksCompleted": 7},
+            {
+                "agentName": "Frontend Developer",
+                "successRate": 96,
+                "avgResponseTime": 1.2,
+                "tasksCompleted": 23,
+            },
+            {
+                "agentName": "Backend Developer",
+                "successRate": 94,
+                "avgResponseTime": 2.1,
+                "tasksCompleted": 18,
+            },
+            {
+                "agentName": "Code Reviewer",
+                "successRate": 99,
+                "avgResponseTime": 1.8,
+                "tasksCompleted": 31,
+            },
+            {
+                "agentName": "Data Scientist",
+                "successRate": 98,
+                "avgResponseTime": 3.5,
+                "tasksCompleted": 12,
+            },
+            {
+                "agentName": "DevOps Engineer",
+                "successRate": 92,
+                "avgResponseTime": 4.2,
+                "tasksCompleted": 8,
+            },
+            {
+                "agentName": "Test Engineer",
+                "successRate": 88,
+                "avgResponseTime": 2.5,
+                "tasksCompleted": 7,
+            },
         ],
         "systemHealth": system_health[-24:],  # Last 24 hours
-        "productivity": productivity
+        "productivity": productivity,
     }
+
 
 @app.get("/api/agents")
 async def get_agents():
@@ -206,7 +240,7 @@ async def get_agents():
                 "status": "active",
                 "lastActive": "2 minutes ago",
                 "tasksCompleted": 23,
-                "currentTask": "Building React components"
+                "currentTask": "Building React components",
             },
             {
                 "id": "2",
@@ -215,7 +249,7 @@ async def get_agents():
                 "status": "busy",
                 "lastActive": "1 minute ago",
                 "tasksCompleted": 18,
-                "currentTask": "API endpoint optimization"
+                "currentTask": "API endpoint optimization",
             },
             {
                 "id": "3",
@@ -223,7 +257,7 @@ async def get_agents():
                 "type": "Analytics",
                 "status": "idle",
                 "lastActive": "15 minutes ago",
-                "tasksCompleted": 12
+                "tasksCompleted": 12,
             },
             {
                 "id": "4",
@@ -232,7 +266,7 @@ async def get_agents():
                 "status": "active",
                 "lastActive": "5 minutes ago",
                 "tasksCompleted": 8,
-                "currentTask": "Docker container updates"
+                "currentTask": "Docker container updates",
             },
             {
                 "id": "5",
@@ -241,7 +275,7 @@ async def get_agents():
                 "status": "busy",
                 "lastActive": "3 minutes ago",
                 "tasksCompleted": 31,
-                "currentTask": "Security audit review"
+                "currentTask": "Security audit review",
             },
             {
                 "id": "6",
@@ -249,10 +283,11 @@ async def get_agents():
                 "type": "Quality",
                 "status": "error",
                 "lastActive": "1 hour ago",
-                "tasksCompleted": 7
-            }
+                "tasksCompleted": 7,
+            },
         ]
     }
+
 
 @app.get("/api/agents/detailed")
 async def get_agents_detailed():
@@ -273,8 +308,8 @@ async def get_agents_detailed():
                 "performance": {
                     "successRate": 96,
                     "avgResponseTime": 1.2,
-                    "totalTasks": 25
-                }
+                    "totalTasks": 25,
+                },
             },
             {
                 "id": "2",
@@ -290,8 +325,8 @@ async def get_agents_detailed():
                 "performance": {
                     "successRate": 94,
                     "avgResponseTime": 2.1,
-                    "totalTasks": 20
-                }
+                    "totalTasks": 20,
+                },
             },
             {
                 "id": "3",
@@ -306,8 +341,8 @@ async def get_agents_detailed():
                 "performance": {
                     "successRate": 98,
                     "avgResponseTime": 3.5,
-                    "totalTasks": 13
-                }
+                    "totalTasks": 13,
+                },
             },
             {
                 "id": "4",
@@ -323,8 +358,8 @@ async def get_agents_detailed():
                 "performance": {
                     "successRate": 92,
                     "avgResponseTime": 4.2,
-                    "totalTasks": 10
-                }
+                    "totalTasks": 10,
+                },
             },
             {
                 "id": "5",
@@ -332,7 +367,12 @@ async def get_agents_detailed():
                 "type": "Quality",
                 "status": "busy",
                 "model": "Claude Sonnet",
-                "capabilities": ["Code Review", "Security", "Best Practices", "Documentation"],
+                "capabilities": [
+                    "Code Review",
+                    "Security",
+                    "Best Practices",
+                    "Documentation",
+                ],
                 "tasksCompleted": 31,
                 "currentTask": "Security audit review",
                 "lastActive": "3 minutes ago",
@@ -340,8 +380,8 @@ async def get_agents_detailed():
                 "performance": {
                     "successRate": 99,
                     "avgResponseTime": 1.8,
-                    "totalTasks": 32
-                }
+                    "totalTasks": 32,
+                },
             },
             {
                 "id": "6",
@@ -349,18 +389,23 @@ async def get_agents_detailed():
                 "type": "Quality",
                 "status": "error",
                 "model": "Claude Haiku",
-                "capabilities": ["Unit Testing", "Integration Testing", "Test Automation"],
+                "capabilities": [
+                    "Unit Testing",
+                    "Integration Testing",
+                    "Test Automation",
+                ],
                 "tasksCompleted": 7,
                 "lastActive": "1 hour ago",
                 "createdAt": "2024-01-01T00:00:00Z",
                 "performance": {
                     "successRate": 88,
                     "avgResponseTime": 2.5,
-                    "totalTasks": 9
-                }
-            }
+                    "totalTasks": 9,
+                },
+            },
         ]
     }
+
 
 @app.get("/api/tasks/recent")
 async def get_recent_tasks():
@@ -374,7 +419,7 @@ async def get_recent_tasks():
                 "status": "completed",
                 "priority": "high",
                 "timestamp": "2 minutes ago",
-                "duration": 1800
+                "duration": 1800,
             },
             {
                 "id": "2",
@@ -382,7 +427,7 @@ async def get_recent_tasks():
                 "agent": "Frontend Developer",
                 "status": "in_progress",
                 "priority": "medium",
-                "timestamp": "5 minutes ago"
+                "timestamp": "5 minutes ago",
             },
             {
                 "id": "3",
@@ -391,7 +436,7 @@ async def get_recent_tasks():
                 "status": "completed",
                 "priority": "medium",
                 "timestamp": "12 minutes ago",
-                "duration": 3600
+                "duration": 3600,
             },
             {
                 "id": "4",
@@ -399,7 +444,7 @@ async def get_recent_tasks():
                 "agent": "DevOps Engineer",
                 "status": "failed",
                 "priority": "high",
-                "timestamp": "15 minutes ago"
+                "timestamp": "15 minutes ago",
             },
             {
                 "id": "5",
@@ -407,7 +452,7 @@ async def get_recent_tasks():
                 "agent": "Test Engineer",
                 "status": "pending",
                 "priority": "low",
-                "timestamp": "18 minutes ago"
+                "timestamp": "18 minutes ago",
             },
             {
                 "id": "6",
@@ -416,7 +461,7 @@ async def get_recent_tasks():
                 "status": "completed",
                 "priority": "high",
                 "timestamp": "25 minutes ago",
-                "duration": 2400
+                "duration": 2400,
             },
             {
                 "id": "7",
@@ -424,7 +469,7 @@ async def get_recent_tasks():
                 "agent": "Data Scientist",
                 "status": "in_progress",
                 "priority": "medium",
-                "timestamp": "32 minutes ago"
+                "timestamp": "32 minutes ago",
             },
             {
                 "id": "8",
@@ -433,10 +478,11 @@ async def get_recent_tasks():
                 "status": "completed",
                 "priority": "low",
                 "timestamp": "45 minutes ago",
-                "duration": 1200
-            }
+                "duration": 1200,
+            },
         ]
     }
+
 
 @app.get("/api/tasks")
 async def get_all_tasks():
@@ -457,7 +503,7 @@ async def get_all_tasks():
                 "dueDate": "2024-01-18T17:00:00Z",
                 "estimatedTime": 8,
                 "actualTime": 6.5,
-                "dependencies": []
+                "dependencies": [],
             },
             {
                 "id": "2",
@@ -472,7 +518,7 @@ async def get_all_tasks():
                 "updatedAt": "2024-01-16T16:20:00Z",
                 "dueDate": "2024-01-17T12:00:00Z",
                 "estimatedTime": 4,
-                "dependencies": []
+                "dependencies": [],
             },
             {
                 "id": "3",
@@ -487,7 +533,7 @@ async def get_all_tasks():
                 "updatedAt": "2024-01-16T15:45:00Z",
                 "estimatedTime": 6,
                 "actualTime": 7.2,
-                "dependencies": []
+                "dependencies": [],
             },
             {
                 "id": "4",
@@ -502,7 +548,7 @@ async def get_all_tasks():
                 "updatedAt": "2024-01-16T13:20:00Z",
                 "dueDate": "2024-01-19T09:00:00Z",
                 "estimatedTime": 12,
-                "dependencies": ["1"]
+                "dependencies": ["1"],
             },
             {
                 "id": "5",
@@ -517,7 +563,7 @@ async def get_all_tasks():
                 "updatedAt": "2024-01-16T10:45:00Z",
                 "dueDate": "2024-01-20T17:00:00Z",
                 "estimatedTime": 5,
-                "dependencies": ["1"]
+                "dependencies": ["1"],
             },
             {
                 "id": "6",
@@ -532,7 +578,7 @@ async def get_all_tasks():
                 "updatedAt": "2024-01-16T11:40:00Z",
                 "estimatedTime": 3,
                 "actualTime": 2.8,
-                "dependencies": []
+                "dependencies": [],
             },
             {
                 "id": "7",
@@ -547,7 +593,7 @@ async def get_all_tasks():
                 "updatedAt": "2024-01-16T14:15:00Z",
                 "dueDate": "2024-01-22T17:00:00Z",
                 "estimatedTime": 16,
-                "dependencies": []
+                "dependencies": [],
             },
             {
                 "id": "8",
@@ -562,7 +608,7 @@ async def get_all_tasks():
                 "updatedAt": "2024-01-16T12:20:00Z",
                 "estimatedTime": 2,
                 "actualTime": 1.5,
-                "dependencies": []
+                "dependencies": [],
             },
             {
                 "id": "9",
@@ -577,7 +623,7 @@ async def get_all_tasks():
                 "updatedAt": "2024-01-16T15:30:00Z",
                 "dueDate": "2024-01-25T17:00:00Z",
                 "estimatedTime": 10,
-                "dependencies": ["2"]
+                "dependencies": ["2"],
             },
             {
                 "id": "10",
@@ -592,10 +638,11 @@ async def get_all_tasks():
                 "updatedAt": "2024-01-16T16:00:00Z",
                 "dueDate": "2024-01-21T17:00:00Z",
                 "estimatedTime": 8,
-                "dependencies": ["4"]
-            }
+                "dependencies": ["4"],
+            },
         ]
     }
+
 
 # Application startup and shutdown events
 @app.on_event("startup")
@@ -609,6 +656,7 @@ async def startup_event():
     except Exception as e:
         logger.error(f"Failed to start SubForge integration: {e}")
 
+
 @app.on_event("shutdown")
 async def shutdown_event():
     """Cleanup on shutdown"""
@@ -620,24 +668,31 @@ async def shutdown_event():
     except Exception as e:
         logger.error(f"Error stopping SubForge integration: {e}")
 
+
 # SubForge-related Socket.IO events
 @sio.event
 async def subforge_workflow_subscribe(sid, data):
     """Subscribe to specific workflow updates"""
-    workflow_id = data.get('workflow_id')
+    workflow_id = data.get("workflow_id")
     if workflow_id:
         sio.enter_room(sid, f"workflow_{workflow_id}")
         logger.info(f"Client {sid} subscribed to workflow: {workflow_id}")
-        await sio.emit('subforge_workflow_subscribed', {'workflow_id': workflow_id}, to=sid)
+        await sio.emit(
+            "subforge_workflow_subscribed", {"workflow_id": workflow_id}, to=sid
+        )
+
 
 @sio.event
 async def subforge_workflow_unsubscribe(sid, data):
     """Unsubscribe from workflow updates"""
-    workflow_id = data.get('workflow_id')
+    workflow_id = data.get("workflow_id")
     if workflow_id:
         sio.leave_room(sid, f"workflow_{workflow_id}")
         logger.info(f"Client {sid} unsubscribed from workflow: {workflow_id}")
-        await sio.emit('subforge_workflow_unsubscribed', {'workflow_id': workflow_id}, to=sid)
+        await sio.emit(
+            "subforge_workflow_unsubscribed", {"workflow_id": workflow_id}, to=sid
+        )
+
 
 @sio.event
 async def subforge_scan_request(sid, data):
@@ -646,13 +701,15 @@ async def subforge_scan_request(sid, data):
     try:
         # Trigger scan
         discovered = await subforge_integration.scan_workflows()
-        await sio.emit('subforge_scan_complete', {
-            'discovered_count': len(discovered),
-            'workflows': discovered
-        }, to=sid)
+        await sio.emit(
+            "subforge_scan_complete",
+            {"discovered_count": len(discovered), "workflows": discovered},
+            to=sid,
+        )
     except Exception as e:
         logger.error(f"Error in scan request: {e}")
-        await sio.emit('subforge_scan_error', {'error': str(e)}, to=sid)
+        await sio.emit("subforge_scan_error", {"error": str(e)}, to=sid)
+
 
 # Export the socket app for uvicorn
 app = socket_app

@@ -4,13 +4,12 @@ Enhanced System API v2 with advanced monitoring and analytics
 
 import logging
 from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Any, Dict
 
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, Query
 from pydantic import BaseModel
 
 from ...services.api_enhancement import api_enhancement_service
-from ...services.redis_service import redis_service
 from ...websocket.enhanced_manager import enhanced_websocket_manager
 
 logger = logging.getLogger(__name__)
@@ -58,7 +57,7 @@ async def get_system_metrics():
         avg_response_time=2.1,
         success_rate=94.5,
         uptime=99.2,
-        error_rate=1.2
+        error_rate=1.2,
     )
 
 
@@ -71,15 +70,13 @@ async def get_system_health():
         "redis": True,
         "websocket_manager": enhanced_websocket_manager.get_connection_count() >= 0,
         "file_system": True,
-        "background_tasks": True
+        "background_tasks": True,
     }
-    
+
     overall_status = "healthy" if all(checks.values()) else "unhealthy"
-    
+
     return SystemHealth(
-        status=overall_status,
-        timestamp=datetime.utcnow(),
-        checks=checks
+        status=overall_status, timestamp=datetime.utcnow(), checks=checks
     )
 
 
@@ -96,18 +93,18 @@ async def get_system_analytics(
         "performance_trends": {
             "response_time_trend": "improving",
             "throughput_trend": "stable",
-            "error_rate_trend": "decreasing"
+            "error_rate_trend": "decreasing",
         },
         "usage_patterns": {
             "peak_hours": ["09:00", "14:00", "16:00"],
             "busiest_day": "Tuesday",
-            "most_active_agents": ["agent-1", "agent-3"]
+            "most_active_agents": ["agent-1", "agent-3"],
         },
         "recommendations": [
             "Consider scaling up during peak hours",
             "Monitor memory usage trends",
-            "Review error patterns for agent-2"
-        ]
+            "Review error patterns for agent-2",
+        ],
     }
 
 

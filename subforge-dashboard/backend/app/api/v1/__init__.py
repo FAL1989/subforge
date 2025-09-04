@@ -3,11 +3,12 @@ API v1 endpoints for SubForge Dashboard
 """
 
 from fastapi import APIRouter
+
 from .agents import router as agents_router
+from .history import router as history_router
+from .system import router as system_router
 from .tasks import router as tasks_router
 from .workflows import router as workflows_router
-from .system import router as system_router
-from .history import router as history_router
 
 api_router = APIRouter()
 

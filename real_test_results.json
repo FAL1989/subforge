@@ -1,0 +1,118 @@
+{
+  "timestamp": "2025-09-04T12:50:52.562018",
+  "serial_execution": {
+    "time": 0.009493827819824219,
+    "findings": [
+      {
+        "agent": "backend-developer",
+        "time": 0.003499746322631836,
+        "findings": "Encontrados 56 m\u00e9todos grandes"
+      },
+      {
+        "agent": "test-engineer",
+        "time": 0.00058746337890625,
+        "findings": "Cobertura estimada: 7.1%"
+      },
+      {
+        "agent": "devops-engineer",
+        "time": 0.0005047321319580078,
+        "findings": "Encontrados 2 arquivos DevOps"
+      },
+      {
+        "agent": "code-reviewer",
+        "time": 0.00225067138671875,
+        "findings": "Encontrados 192 poss\u00edveis issues"
+      },
+      {
+        "agent": "data-scientist",
+        "time": 0.002611398696899414,
+        "findings": "Complexidade: 767 ifs, 510 loops"
+      }
+    ]
+  },
+  "parallel_execution": {
+    "time": 0.008045434951782227,
+    "findings": [
+      {
+        "agent": "backend-developer",
+        "findings": "56 m\u00e9todos grandes"
+      },
+      {
+        "agent": "test-engineer",
+        "findings": "Cobertura: 7.1%"
+      },
+      {
+        "agent": "devops-engineer",
+        "findings": "1 arquivos DevOps"
+      },
+      {
+        "agent": "code-reviewer",
+        "findings": "197 issues"
+      },
+      {
+        "agent": "data-scientist",
+        "findings": "767 ifs, 510 loops"
+      }
+    ]
+  },
+  "improvements_found": [],
+  "metrics": {
+    "serial_time": 0.009493827819824219,
+    "parallel_time": 0.008045434951782227,
+    "speedup": 1.1800266706178693,
+    "efficiency": 15.256152687091914,
+    "time_saved": 0.0014483928680419922
+  },
+  "codebase_stats": {
+    "python_files": 28,
+    "total_lines": 11259,
+    "problems": {
+      "todos": 2,
+      "sleeps": 3,
+      "not_implemented": [],
+      "large_files": [
+        {
+          "file": "subforge/simple_cli.py",
+          "lines": 753
+        },
+        {
+          "file": "subforge/core/project_analyzer.py",
+          "lines": 809
+        },
+        {
+          "file": "subforge/core/context_engineer.py",
+          "lines": 558
+        },
+        {
+          "file": "subforge/core/workflow_orchestrator.py",
+          "lines": 2419
+        },
+        {
+          "file": "subforge/core/mcp_task_manager.py",
+          "lines": 669
+        },
+        {
+          "file": "subforge/core/validation_engine.py",
+          "lines": 1006
+        },
+        {
+          "file": "subforge/core/prp_generator.py",
+          "lines": 741
+        },
+        {
+          "file": "subforge/core/testing/test_generator.py",
+          "lines": 696
+        },
+        {
+          "file": "subforge/core/testing/test_validator.py",
+          "lines": 502
+        },
+        {
+          "file": "subforge/core/testing/test_runner.py",
+          "lines": 715
+        }
+      ]
+    },
+    "avg_file_size": 402
+  }
+}

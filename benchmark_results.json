@@ -1,0 +1,33 @@
+{
+  "timestamp": "2025-09-04T12:38:35.590527",
+  "project_stats": {
+    "total_files": 20290,
+    "python_files": 3498,
+    "javascript_files": 13758,
+    "typescript_files": 3034,
+    "total_lines": 4142934,
+    "agents_available": 7,
+    "parallel_capacity": 5
+  },
+  "serial_execution": {
+    "method": "Sequential (one agent at a time)",
+    "total_time": 32.0,
+    "agents_used": 5,
+    "tasks_completed": 5,
+    "average_time_per_task": 6.4
+  },
+  "parallel_execution": {
+    "method": "Parallel with @orchestrator",
+    "total_time": 8.5,
+    "agents_used": 5,
+    "tasks_completed": 5,
+    "parallel_phases": 1,
+    "max_concurrent_agents": 5
+  },
+  "speedup_metrics": {
+    "speedup_factor": 3.76,
+    "efficiency_gain": 73.4,
+    "time_saved_seconds": 23.5,
+    "time_saved_percentage": 73.4
+  }
+}

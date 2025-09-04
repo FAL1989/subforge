@@ -4,13 +4,17 @@ Enhanced Workflows API v2 with advanced orchestration features
 
 import logging
 from datetime import datetime
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, Depends, Query, status
+from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel, Field
 
-from ...services.api_enhancement import api_enhancement_service, get_current_user, require_auth
+from ...services.api_enhancement import (
+    api_enhancement_service,
+    get_current_user,
+    require_auth,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -60,19 +64,19 @@ async def list_workflows():
 @api_enhancement_service.rate_limit(requests_per_minute=20, per_user=True)
 @require_auth
 async def create_workflow(
-    workflow_data: dict,
-    current_user: dict = Depends(get_current_user)
+    workflow_data: dict, current_user: dict = Depends(get_current_user)
 ):
     """Create a new workflow with steps and dependencies"""
-    return Workflow(id=str(uuid4()), name="Mock Workflow", created_by=current_user.get("id"))
+    return Workflow(
+        id=str(uuid4()), name="Mock Workflow", created_by=current_user.get("id")
+    )
 
 
 @router.post("/{workflow_id}/execute")
 @api_enhancement_service.rate_limit(requests_per_minute=10, per_user=True)
 @require_auth
 async def execute_workflow(
-    workflow_id: str,
-    current_user: dict = Depends(get_current_user)
+    workflow_id: str, current_user: dict = Depends(get_current_user)
 ):
     """Execute a workflow with real-time progress tracking"""
     return {"message": "Workflow execution started", "workflow_id": workflow_id}

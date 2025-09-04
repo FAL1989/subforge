@@ -3,14 +3,12 @@ Test cases for the main FastAPI application
 """
 
 import pytest
+from app.database.base import Base
+from app.database.session import get_db
+from app.main import app
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-
-from app.main import app
-from app.database.session import get_db
-from app.database.base import Base
-
 
 # Create test database
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test_subforge_dashboard.db"
@@ -105,12 +103,12 @@ def test_create_agent():
         "agent_type": "test-agent",
         "description": "A test agent",
         "tools": ["read", "write"],
-        "capabilities": ["coding", "testing"]
+        "capabilities": ["coding", "testing"],
     }
-    
+
     response = client.post("/api/v1/agents", json=agent_data)
     assert response.status_code == 200
-    
+
     data = response.json()
     assert data["name"] == agent_data["name"]
     assert data["type"] == agent_data["agent_type"]
@@ -123,12 +121,12 @@ def test_create_task():
         "title": "Test Task",
         "description": "A test task",
         "priority": "medium",
-        "tags": ["test", "backend"]
+        "tags": ["test", "backend"],
     }
-    
+
     response = client.post("/api/v1/tasks", json=task_data)
     assert response.status_code == 200
-    
+
     data = response.json()
     assert data["title"] == task_data["title"]
     assert data["priority"] == task_data["priority"]
@@ -141,12 +139,12 @@ def test_create_workflow():
         "name": "Test Workflow",
         "description": "A test workflow",
         "workflow_type": "testing",
-        "tags": ["test"]
+        "tags": ["test"],
     }
-    
+
     response = client.post("/api/v1/workflows", json=workflow_data)
     assert response.status_code == 200
-    
+
     data = response.json()
     assert data["name"] == workflow_data["name"]
     assert data["workflow_type"] == workflow_data["workflow_type"]

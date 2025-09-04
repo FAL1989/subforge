@@ -4,15 +4,17 @@ Enhanced Tasks API v2 with advanced features
 
 import logging
 from datetime import datetime
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, Depends, Query, status
+from fastapi import APIRouter, Depends, Query, status
 from pydantic import BaseModel, Field
 
-from ...services.api_enhancement import api_enhancement_service, get_current_user, require_auth
-from ...services.redis_service import redis_service
-from ...websocket.enhanced_manager import enhanced_websocket_manager, MessageType
+from ...services.api_enhancement import (
+    api_enhancement_service,
+    get_current_user,
+    require_auth,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +46,9 @@ class Task(BaseModel):
     created_by: Optional[str] = None
 
 
-@router.get("/", response_model=List[Task], summary="List tasks with advanced filtering")
+@router.get(
+    "/", response_model=List[Task], summary="List tasks with advanced filtering"
+)
 @api_enhancement_service.cache_response(ttl=30)
 @api_enhancement_service.rate_limit(requests_per_minute=100)
 async def list_tasks(
@@ -54,7 +58,7 @@ async def list_tasks(
     priority: Optional[str] = Query(None),
     assigned_agent: Optional[str] = Query(None),
     tags: Optional[str] = Query(None, description="Comma-separated tags"),
-    search: Optional[str] = Query(None, description="Search in title and description")
+    search: Optional[str] = Query(None, description="Search in title and description"),
 ):
     """List tasks with enhanced filtering capabilities"""
     # Implementation would go here - similar to agents.py pattern
@@ -64,10 +68,7 @@ async def list_tasks(
 @router.post("/", response_model=Task, status_code=status.HTTP_201_CREATED)
 @api_enhancement_service.rate_limit(requests_per_minute=30, per_user=True)
 @require_auth
-async def create_task(
-    task_data: dict,
-    current_user: dict = Depends(get_current_user)
-):
+async def create_task(task_data: dict, current_user: dict = Depends(get_current_user)):
     """Create a new task with dependencies and scheduling"""
     # Implementation would go here
     return Task(id=str(uuid4()), title="Mock Task", created_by=current_user.get("id"))

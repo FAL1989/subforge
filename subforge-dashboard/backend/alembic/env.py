@@ -2,21 +2,23 @@
 Alembic environment configuration for SubForge Dashboard
 """
 
-from logging.config import fileConfig
-from sqlalchemy import pool
-from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import create_async_engine
-from alembic import context
 import asyncio
 import os
 import sys
+from logging.config import fileConfig
+
+from alembic import context
+from sqlalchemy import pool
+from sqlalchemy.engine import Connection
+from sqlalchemy.ext.asyncio import create_async_engine
 
 # Add parent directory to path to import app modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
+from app.core.config import settings
+
 # Import application modules
 from app.database.base import Base
-from app.core.config import settings
 from app.models import *  # Import all models to ensure they're registered
 
 # this is the Alembic Config object, which provides

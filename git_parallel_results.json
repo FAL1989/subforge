@@ -1,0 +1,1660 @@
+{
+  "serial": {
+    "total_files": 148,
+    "total_time": 0.21195292472839355,
+    "files_per_second": 698.2682602264355
+  },
+  "parallel": {
+    "total_files": 148,
+    "categories": 6,
+    "total_time": 0.46510863304138184,
+    "results": [
+      {
+        "category": "documentation",
+        "total_files": 24,
+        "processing_time": 0.4646880626678467,
+        "files_per_second": 51.6475501053594,
+        "modified": 10,
+        "untracked": 14,
+        "analysis": [
+          {
+            "path": "claude/agents/backend-developer.md",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "claude/agents/code-reviewer.md",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "claude/agents/data-scientist.md",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "claude/agents/frontend-developer.md",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "LAUDE.md",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "BENCHMARK_RESULTS.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "ERROR_RECOVERY_SUMMARY.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "META_IMPROVEMENT_PLAN.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "RAPID_SYSTEM_CREATION.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "README_PYPI.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "REAL_IMPROVEMENTS_SUMMARY.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "REVOLUTION_SUMMARY.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "claude/agents/backend-developer.md",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "claude/agents/code-reviewer.md",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "claude/agents/data-scientist.md",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "claude/agents/frontend-developer.md",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "LAUDE.md",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "BENCHMARK_RESULTS.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "ERROR_RECOVERY_SUMMARY.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "META_IMPROVEMENT_PLAN.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "RAPID_SYSTEM_CREATION.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "README_PYPI.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "REAL_IMPROVEMENTS_SUMMARY.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "REVOLUTION_SUMMARY.md",
+            "type": "untracked",
+            "changes": null
+          }
+        ]
+      },
+      {
+        "category": "tests",
+        "total_files": 58,
+        "processing_time": 0.4646878242492676,
+        "files_per_second": 124.81497679372738,
+        "modified": 38,
+        "untracked": 20,
+        "analysis": [
+          {
+            "path": "claude/agents/test-engineer.md",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/test_mystery.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/tests/test_main.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/backend/integration/test_full_workflow.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/backend/performance/test_load.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/backend/security/test_security.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/backend/unit/test_api_agents.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/backend/unit/test_models.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/backend/unit/test_websocket.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/conftest.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/fixtures/agent_fixtures.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/integration/test_api_integration.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/run_tests.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/utils/test_helpers.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/testing/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/testing/test_generator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/testing/test_runner.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/testing/test_validator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ests/test_installation.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "TESTING_SUMMARY.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "real_test_results.json",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "test_parallel.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "test_parallel_real.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "tests/test_core_functionality.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "tests/test_parallel_executor.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "tests/test_project_analyzer.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "tests/test_simplified_core.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "tests/test_subforge.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "tests/test_workflow_orchestrator.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "claude/agents/test-engineer.md",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/test_mystery.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/tests/test_main.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/backend/integration/test_full_workflow.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/backend/performance/test_load.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/backend/security/test_security.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/backend/unit/test_api_agents.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/backend/unit/test_models.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/backend/unit/test_websocket.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/conftest.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/fixtures/agent_fixtures.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/integration/test_api_integration.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/run_tests.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/tests/utils/test_helpers.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/testing/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/testing/test_generator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/testing/test_runner.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/testing/test_validator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ests/test_installation.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "TESTING_SUMMARY.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "real_test_results.json",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "test_parallel.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "test_parallel_real.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "tests/test_core_functionality.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "tests/test_parallel_executor.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "tests/test_project_analyzer.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "tests/test_simplified_core.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "tests/test_subforge.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "tests/test_workflow_orchestrator.py",
+            "type": "untracked",
+            "changes": null
+          }
+        ]
+      },
+      {
+        "category": "python",
+        "total_files": 170,
+        "processing_time": 0.46460676193237305,
+        "files_per_second": 365.9008303989014,
+        "modified": 164,
+        "untracked": 6,
+        "analysis": [
+          {
+            "path": "emo.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "etup.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/alembic/env.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/alembic/versions/20250901_203222_add_workflow_history_and_agent_performance_tables.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/generators/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/generators/report_generator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/models/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/models/base_analyzer.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/models/optimization_engine.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/models/performance_analyzer.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/models/predictive_models.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/processors/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/processors/data_aggregator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/processors/insight_generator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/processors/trend_analyzer.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/services/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/services/analytics_service.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/subforge_routes.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v1/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v1/agents.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v1/history.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v1/system.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v1/tasks.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v1/workflows.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/agents.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/analytics.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/background_tasks.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/files.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/system.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/tasks.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/websocket_api.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/workflows.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/core/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/core/config.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/database/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/database/session.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/main.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/main_simple.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/agent.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/database.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/subforge_models.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/system_metrics.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/task.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/workflow.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/schemas/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/schemas/agent.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/schemas/system_metrics.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/schemas/task.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/schemas/workflow.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/services/analytics_integration.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/services/api_enhancement.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/services/background_tasks.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/services/persistence.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/services/redis_service.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/services/subforge_integration.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/utils/file_watcher.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/utils/logging_config.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/websocket/enhanced_manager.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/websocket/manager.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/websocket/socketio_manager.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/main.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/models/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/run.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/run_simple.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/run_socketio.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/start_enhanced.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/verify_setup.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/__main__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/cli.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/communication.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/context_engineer.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/mcp_task_manager.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/project_analyzer.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/prp_generator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/validation_engine.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/workflow_orchestrator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/simple_cli.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "benchmark_parallel.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "demo_parallel_real.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "git_parallel_processor.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "emo.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "etup.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/alembic/env.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/alembic/versions/20250901_203222_add_workflow_history_and_agent_performance_tables.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/generators/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/generators/report_generator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/models/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/models/base_analyzer.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/models/optimization_engine.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/models/performance_analyzer.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/models/predictive_models.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/processors/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/processors/data_aggregator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/processors/insight_generator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/processors/trend_analyzer.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/services/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/analytics/services/analytics_service.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/subforge_routes.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v1/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v1/agents.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v1/history.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v1/system.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v1/tasks.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v1/workflows.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/agents.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/analytics.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/background_tasks.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/files.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/system.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/tasks.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/websocket_api.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/api/v2/workflows.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/core/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/core/config.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/database/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/database/session.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/main.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/main_simple.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/agent.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/database.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/subforge_models.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/system_metrics.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/task.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/models/workflow.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/schemas/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/schemas/agent.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/schemas/system_metrics.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/schemas/task.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/schemas/workflow.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/services/analytics_integration.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/services/api_enhancement.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/services/background_tasks.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/services/persistence.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/services/redis_service.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/services/subforge_integration.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/utils/file_watcher.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/utils/logging_config.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/websocket/enhanced_manager.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/websocket/manager.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/app/websocket/socketio_manager.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/main.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/models/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/run.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/run_simple.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/run_socketio.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/start_enhanced.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge-dashboard/backend/verify_setup.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/__main__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/cli.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/__init__.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/communication.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/context_engineer.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/mcp_task_manager.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/project_analyzer.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/prp_generator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/validation_engine.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/core/workflow_orchestrator.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "ubforge/simple_cli.py",
+            "type": "modified",
+            "changes": null
+          },
+          {
+            "path": "benchmark_parallel.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "demo_parallel_real.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "git_parallel_processor.py",
+            "type": "untracked",
+            "changes": null
+          }
+        ]
+      },
+      {
+        "category": "agents",
+        "total_files": 14,
+        "processing_time": 0.4643981456756592,
+        "files_per_second": 30.146545868806623,
+        "modified": 0,
+        "untracked": 14,
+        "analysis": [
+          {
+            "path": ".claude/agents/devops-engineer.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/agents/orchestrator.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/commands/dev-workflow.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/commands/parallel-agents.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/commands/parallel-executor.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/commands/research-context.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/context/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/agents/devops-engineer.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/agents/orchestrator.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/commands/dev-workflow.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/commands/parallel-agents.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/commands/parallel-executor.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/commands/research-context.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".claude/context/",
+            "type": "untracked",
+            "changes": null
+          }
+        ]
+      },
+      {
+        "category": "misc",
+        "total_files": 10,
+        "processing_time": 0.46303558349609375,
+        "files_per_second": 21.596612347794565,
+        "modified": 0,
+        "untracked": 10,
+        "analysis": [
+          {
+            "path": ".github/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "benchmark_results.json",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "publish.sh",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge_env/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "workflow-state/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": ".github/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "benchmark_results.json",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "publish.sh",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge_env/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "workflow-state/",
+            "type": "untracked",
+            "changes": null
+          }
+        ]
+      },
+      {
+        "category": "core",
+        "total_files": 20,
+        "processing_time": 0.46301937103271484,
+        "files_per_second": 43.19473709143562,
+        "modified": 0,
+        "untracked": 20,
+        "analysis": [
+          {
+            "path": "subforge/core/cache_manager.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/generators.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/integrations/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/monitoring/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/orchestration/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/plugins/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/templates/__init__.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/templates/intelligent_templates.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/templates/orchestrator.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/utils/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/core/cache_manager.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/generators.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/integrations/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/monitoring/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/orchestration/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/plugins/",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/templates/__init__.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/templates/intelligent_templates.py",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/templates/orchestrator.md",
+            "type": "untracked",
+            "changes": null
+          },
+          {
+            "path": "subforge/utils/",
+            "type": "untracked",
+            "changes": null
+          }
+        ]
+      }
+    ],
+    "files_per_second": 318.20523096339105
+  },
+  "speedup": 0.4557062795038156,
+  "commits": [
+    {
+      "category": "documentation",
+      "message": "docs: Update documentation and examples",
+      "files": [
+        "claude/agents/backend-developer.md",
+        "claude/agents/code-reviewer.md",
+        "claude/agents/data-scientist.md",
+        "claude/agents/frontend-developer.md",
+        "LAUDE.md",
+        "BENCHMARK_RESULTS.md",
+        "ERROR_RECOVERY_SUMMARY.md",
+        "META_IMPROVEMENT_PLAN.md",
+        "RAPID_SYSTEM_CREATION.md",
+        "README_PYPI.md"
+      ],
+      "total_files": 24
+    },
+    {
+      "category": "tests",
+      "message": "test: Add comprehensive test coverage",
+      "files": [
+        "claude/agents/test-engineer.md",
+        "ubforge-dashboard/backend/test_mystery.py",
+        "ubforge-dashboard/backend/tests/test_main.py",
+        "ubforge-dashboard/tests/backend/integration/test_full_workflow.py",
+        "ubforge-dashboard/tests/backend/performance/test_load.py",
+        "ubforge-dashboard/tests/backend/security/test_security.py",
+        "ubforge-dashboard/tests/backend/unit/test_api_agents.py",
+        "ubforge-dashboard/tests/backend/unit/test_models.py",
+        "ubforge-dashboard/tests/backend/unit/test_websocket.py",
+        "ubforge-dashboard/tests/conftest.py"
+      ],
+      "total_files": 58
+    },
+    {
+      "category": "python",
+      "message": "refactor: Improve Python code quality",
+      "files": [
+        "emo.py",
+        "etup.py",
+        "ubforge-dashboard/backend/alembic/env.py",
+        "ubforge-dashboard/backend/alembic/versions/20250901_203222_add_workflow_history_and_agent_performance_tables.py",
+        "ubforge-dashboard/backend/analytics/__init__.py",
+        "ubforge-dashboard/backend/analytics/generators/__init__.py",
+        "ubforge-dashboard/backend/analytics/generators/report_generator.py",
+        "ubforge-dashboard/backend/analytics/models/__init__.py",
+        "ubforge-dashboard/backend/analytics/models/base_analyzer.py",
+        "ubforge-dashboard/backend/analytics/models/optimization_engine.py"
+      ],
+      "total_files": 170
+    },
+    {
+      "category": "agents",
+      "message": "feat(agents): Update agent configurations and prompts",
+      "files": [
+        ".claude/agents/devops-engineer.md",
+        ".claude/agents/orchestrator.md",
+        ".claude/commands/dev-workflow.md",
+        ".claude/commands/parallel-agents.md",
+        ".claude/commands/parallel-executor.md",
+        ".claude/commands/research-context.md",
+        ".claude/context/",
+        ".claude/agents/devops-engineer.md",
+        ".claude/agents/orchestrator.md",
+        ".claude/commands/dev-workflow.md"
+      ],
+      "total_files": 14
+    },
+    {
+      "category": "misc",
+      "message": "chore: Update miscellaneous files",
+      "files": [
+        ".github/",
+        "benchmark_results.json",
+        "publish.sh",
+        "subforge_env/",
+        "workflow-state/",
+        ".github/",
+        "benchmark_results.json",
+        "publish.sh",
+        "subforge_env/",
+        "workflow-state/"
+      ],
+      "total_files": 10
+    },
+    {
+      "category": "core",
+      "message": "refactor(core): Improve core SubForge functionality",
+      "files": [
+        "subforge/core/cache_manager.py",
+        "subforge/generators.py",
+        "subforge/integrations/",
+        "subforge/monitoring/",
+        "subforge/orchestration/",
+        "subforge/plugins/",
+        "subforge/templates/__init__.py",
+        "subforge/templates/intelligent_templates.py",
+        "subforge/templates/orchestrator.md",
+        "subforge/utils/"
+      ],
+      "total_files": 20
+    }
+  ]
+}

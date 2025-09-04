@@ -2,14 +2,16 @@
 Pydantic models for SubForge integration
 """
 
-from pydantic import BaseModel, Field, validator
-from typing import Dict, List, Optional, Any, Union
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field, validator
 
 
 class WorkflowStatus(str, Enum):
     """Workflow status enumeration"""
+
     ACTIVE = "active"
     COMPLETED = "completed"
     FAILED = "failed"
@@ -19,6 +21,7 @@ class WorkflowStatus(str, Enum):
 
 class PhaseStatus(str, Enum):
     """Phase status enumeration"""
+
     PENDING = "pending"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
@@ -28,6 +31,7 @@ class PhaseStatus(str, Enum):
 
 class EventType(str, Enum):
     """File system event types"""
+
     CREATED = "created"
     MODIFIED = "modified"
     DELETED = "deleted"
@@ -36,6 +40,7 @@ class EventType(str, Enum):
 
 class PhaseResult(BaseModel):
     """Model for SubForge phase result"""
+
     phase: str
     status: PhaseStatus
     duration: Optional[float] = None
@@ -47,13 +52,12 @@ class PhaseResult(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
     class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat() if v else None
-        }
+        json_encoders = {datetime: lambda v: v.isoformat() if v else None}
 
 
 class ProjectProfile(BaseModel):
     """Model for SubForge project profile"""
+
     languages: List[str] = Field(default_factory=list)
     frameworks: List[str] = Field(default_factory=list)
     architecture: Optional[str] = None
@@ -67,6 +71,7 @@ class ProjectProfile(BaseModel):
 
 class AgentTemplate(BaseModel):
     """Model for agent template configuration"""
+
     name: str
     role: str
     specialization: str
@@ -81,6 +86,7 @@ class AgentTemplate(BaseModel):
 
 class Task(BaseModel):
     """Model for SubForge task"""
+
     id: str
     title: str
     description: Optional[str] = None
@@ -97,13 +103,12 @@ class Task(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
     class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat() if v else None
-        }
+        json_encoders = {datetime: lambda v: v.isoformat() if v else None}
 
 
 class AgentActivity(BaseModel):
     """Model for agent activity tracking"""
+
     agent_id: str
     agent_name: str
     activity_type: str
@@ -116,13 +121,12 @@ class AgentActivity(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
     class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat() if v else None
-        }
+        json_encoders = {datetime: lambda v: v.isoformat() if v else None}
 
 
 class WorkflowContext(BaseModel):
     """Model for SubForge workflow context"""
+
     project_id: str
     user_request: str
     project_path: str
@@ -131,39 +135,37 @@ class WorkflowContext(BaseModel):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
-    
+
     # Phase results
     phase_results: Dict[str, PhaseResult] = Field(default_factory=dict)
-    
+
     # Project analysis
     project_profile: Optional[ProjectProfile] = None
-    
+
     # Agent configuration
     recommended_agents: List[AgentTemplate] = Field(default_factory=list)
     deployed_agents: List[AgentTemplate] = Field(default_factory=list)
-    
+
     # Task management
     tasks: List[Task] = Field(default_factory=list)
-    
+
     # Activity tracking
     agent_activities: List[AgentActivity] = Field(default_factory=list)
-    
+
     # Metrics
     total_phases: int = 0
     completed_phases: int = 0
     failed_phases: int = 0
     progress_percentage: float = 0.0
-    
+
     # Metadata
     metadata: Dict[str, Any] = Field(default_factory=dict)
     configuration: Dict[str, Any] = Field(default_factory=dict)
 
     class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat() if v else None
-        }
+        json_encoders = {datetime: lambda v: v.isoformat() if v else None}
 
-    @validator('phase_results', pre=True)
+    @validator("phase_results", pre=True)
     def parse_phase_results(cls, v):
         """Parse phase results from dict to PhaseResult objects"""
         if isinstance(v, dict):
@@ -171,8 +173,8 @@ class WorkflowContext(BaseModel):
             for phase_name, result_data in v.items():
                 if isinstance(result_data, dict):
                     # Ensure all required fields are present
-                    result_data.setdefault('phase', phase_name)
-                    result_data.setdefault('status', 'pending')
+                    result_data.setdefault("phase", phase_name)
+                    result_data.setdefault("status", "pending")
                     parsed[phase_name] = PhaseResult(**result_data)
                 else:
                     parsed[phase_name] = result_data
@@ -189,14 +191,16 @@ class WorkflowContext(BaseModel):
     def get_completed_phases(self) -> List[str]:
         """Get list of completed phases"""
         return [
-            phase_name for phase_name, result in self.phase_results.items()
+            phase_name
+            for phase_name, result in self.phase_results.items()
             if result.status == PhaseStatus.COMPLETED
         ]
 
     def get_failed_phases(self) -> List[str]:
         """Get list of failed phases"""
         return [
-            phase_name for phase_name, result in self.phase_results.items()
+            phase_name
+            for phase_name, result in self.phase_results.items()
             if result.status == PhaseStatus.FAILED
         ]
 
@@ -204,7 +208,7 @@ class WorkflowContext(BaseModel):
         """Calculate workflow progress percentage"""
         if not self.phase_results:
             return 0.0
-        
+
         completed = len(self.get_completed_phases())
         total = len(self.phase_results)
         return (completed / total) * 100.0 if total > 0 else 0.0
@@ -219,6 +223,7 @@ class WorkflowContext(BaseModel):
 
 class FileSystemEvent(BaseModel):
     """Model for file system events"""
+
     event_type: EventType
     file_path: str
     timestamp: datetime
@@ -227,15 +232,16 @@ class FileSystemEvent(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
     class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat() if v else None
-        }
+        json_encoders = {datetime: lambda v: v.isoformat() if v else None}
 
 
 class SubForgeIntegrationConfig(BaseModel):
     """Configuration for SubForge integration"""
+
     subforge_dir: str = ".subforge"
-    watch_patterns: List[str] = Field(default_factory=lambda: ["*.json", "*.md", "*.py"])
+    watch_patterns: List[str] = Field(
+        default_factory=lambda: ["*.json", "*.md", "*.py"]
+    )
     scan_interval: int = 30  # seconds
     max_workflows: int = 100
     cleanup_after_days: int = 30
@@ -245,6 +251,7 @@ class SubForgeIntegrationConfig(BaseModel):
 
 class WorkflowSummary(BaseModel):
     """Summary model for workflow list responses"""
+
     project_id: str
     user_request: str
     status: WorkflowStatus
@@ -258,13 +265,12 @@ class WorkflowSummary(BaseModel):
     agent_count: int = 0
 
     class Config:
-        json_encoders = {
-            datetime: lambda v: v.isoformat() if v else None
-        }
+        json_encoders = {datetime: lambda v: v.isoformat() if v else None}
 
 
 class WorkflowMetrics(BaseModel):
     """Metrics model for workflow analytics"""
+
     total_workflows: int = 0
     active_workflows: int = 0
     completed_workflows: int = 0

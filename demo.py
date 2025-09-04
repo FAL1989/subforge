@@ -7,10 +7,10 @@ Shows all SubForge capabilities in action
 import asyncio
 from pathlib import Path
 
-from subforge.core.project_analyzer import ProjectAnalyzer
-from subforge.core.workflow_orchestrator import WorkflowOrchestrator
-from subforge.core.validation_engine import ValidationEngine
 from subforge.core.communication import CommunicationChannel, send_analysis_report
+from subforge.core.project_analyzer import ProjectAnalyzer
+from subforge.core.validation_engine import ValidationEngine
+from subforge.core.workflow_orchestrator import WorkflowOrchestrator
 
 
 def print_section(title: str, emoji: str = "🔥"):
@@ -23,7 +23,8 @@ def print_section(title: str, emoji: str = "🔥"):
 async def main():
     """Complete SubForge demonstration"""
 
-    print(r"""
+    print(
+        r"""
  ____        _     _____
 / ___| _   _| |__ |  ___|__  _ __ __ _  ___
 \___ \| | | | '_ \| |_ / _ \| '__/ _` |/ _ \
@@ -32,7 +33,8 @@ async def main():
                                  |___/
 
 🚀 SubForge v1.0-Alpha - Complete Demonstration
-""")
+"""
+    )
 
     # Demo project path
     demo_path = Path.cwd()
@@ -68,8 +70,12 @@ async def main():
     print("\n🎯 Workflow Results:")
     print(f"  • Workflow ID: {context.project_id}")
     print(f"  • Phases Completed: {len(context.phase_results)}")
-    print(f"  • Generated Subagents: {len(context.template_selections.get('selected_templates', []))}")
-    print(f"  • Configuration Files: {len(list(context.communication_dir.glob('**/*.md')))}")
+    print(
+        f"  • Generated Subagents: {len(context.template_selections.get('selected_templates', []))}"
+    )
+    print(
+        f"  • Configuration Files: {len(list(context.communication_dir.glob('**/*.md')))}"
+    )
 
     print_section("3. COMMUNICATION SYSTEM", "💬")
     print("Testing markdown-based communication...")
@@ -78,11 +84,7 @@ async def main():
     channel = CommunicationChannel(context.communication_dir / "communication_test")
 
     # Send analysis report
-    message_id = send_analysis_report(
-        channel,
-        "project-analyzer",
-        profile.to_dict()
-    )
+    message_id = send_analysis_report(channel, "project-analyzer", profile.to_dict())
 
     # Get messages
     summary = channel.get_channel_summary()
@@ -98,14 +100,14 @@ async def main():
     # Prepare validation context
     validation_config = {
         "project_name": profile.name,
-        "subagents": context.template_selections.get("selected_templates", [])
+        "subagents": context.template_selections.get("selected_templates", []),
     }
 
     validation_context = {
         "project_id": context.project_id,
         "project_profile": profile.to_dict(),
         "template_selections": context.template_selections,
-        "generated_configurations": context.generated_configurations
+        "generated_configurations": context.generated_configurations,
     }
 
     # Run validation
@@ -125,7 +127,9 @@ async def main():
             print(f"  • {rec}")
 
     # Test deployment
-    success, message = validator.create_test_deployment(validation_config, validation_context)
+    success, message = validator.create_test_deployment(
+        validation_config, validation_context
+    )
     print(f"\n🧪 Test Deployment: {'✅ Success' if success else '❌ Failed'}")
     print(f"  • {message}")
 
@@ -163,11 +167,14 @@ async def main():
     if total_duration > 0:
         files_per_sec = profile.file_count / total_duration
         lines_per_sec = profile.lines_of_code / total_duration
-        print(f"  • Processing Speed: {files_per_sec:.1f} files/sec, {lines_per_sec:,.0f} lines/sec")
+        print(
+            f"  • Processing Speed: {files_per_sec:.1f} files/sec, {lines_per_sec:,.0f} lines/sec"
+        )
 
     print_section("7. DEMO COMPLETE! 🎉", "🚀")
 
-    print(f"""
+    print(
+        f"""
 ✨ SubForge v1.0-Alpha Demonstration Complete!
 
 🎯 What We Just Did:
@@ -186,7 +193,8 @@ async def main():
   • Claude Code marketplace integration
 
 Configuration saved in: {context.communication_dir}
-    """)
+    """
+    )
 
 
 if __name__ == "__main__":

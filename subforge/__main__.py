@@ -10,8 +10,9 @@ import sys
 
 # Check if rich CLI is available
 try:
-    import typer  # noqa: F401
     import rich  # noqa: F401
+    import typer  # noqa: F401
+
     # Rich CLI is available, use the advanced interface
     from .cli import main
 except ImportError:

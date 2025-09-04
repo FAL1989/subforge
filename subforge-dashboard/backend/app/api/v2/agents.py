@@ -4,22 +4,30 @@ Enhanced Agents API v2 with advanced features
 
 import logging
 from datetime import datetime
-from typing import List, Optional, Dict, Any
+from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, Depends, Request, Response, Query, UploadFile, File, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    HTTPException,
+    Query,
+    Request,
+    UploadFile,
+    status,
+)
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from ...services.api_enhancement import (
-    api_enhancement_service, 
-    get_current_user, 
-    require_auth, 
-    require_permission
+    api_enhancement_service,
+    get_current_user,
+    require_auth,
 )
-from ...services.background_tasks import background_task_service, TaskPriority
+from ...services.background_tasks import TaskPriority, background_task_service
 from ...services.redis_service import redis_service
-from ...websocket.enhanced_manager import enhanced_websocket_manager, MessageType
+from ...websocket.enhanced_manager import MessageType, enhanced_websocket_manager
 
 logger = logging.getLogger(__name__)
 
@@ -101,7 +109,7 @@ async def get_agent_from_cache_or_storage(agent_id: str) -> Optional[Agent]:
     cached_agent = await redis_service.hget("agents", agent_id)
     if cached_agent:
         return Agent(**cached_agent)
-    
+
     # TODO: Get from database if not in cache
     return None
 
@@ -122,10 +130,11 @@ async def invalidate_agent_cache(agent_id: Optional[str] = None):
 
 # API Endpoints
 
+
 @router.get(
-    "/", 
+    "/",
     response_model=List[Agent],
-    summary="List all agents with advanced filtering and pagination"
+    summary="List all agents with advanced filtering and pagination",
 )
 @api_enhancement_service.cache_response(ttl=60, prefix="agents_list")
 @api_enhancement_service.rate_limit(requests_per_minute=100)
@@ -136,9 +145,11 @@ async def list_agents(
     status: Optional[str] = Query(None, description="Filter by status"),
     type: Optional[str] = Query(None, description="Filter by agent type"),
     tags: Optional[str] = Query(None, description="Comma-separated tags to filter by"),
-    search: Optional[str] = Query(None, description="Search in agent names and descriptions"),
+    search: Optional[str] = Query(
+        None, description="Search in agent names and descriptions"
+    ),
     sort_by: str = Query("created_at", description="Field to sort by"),
-    sort_order: str = Query("desc", regex="^(asc|desc)$", description="Sort order")
+    sort_order: str = Query("desc", regex="^(asc|desc)$", description="Sort order"),
 ):
     """List all agents with advanced filtering and pagination"""
     try:
@@ -150,15 +161,15 @@ async def list_agents(
             filters.type = type
         if tags:
             filters.tags = [tag.strip() for tag in tags.split(",")]
-        
+
         # Get agents from cache/storage
         all_agents_data = await redis_service.hgetall("agents")
         agents = []
-        
+
         for agent_id, agent_data in all_agents_data.items():
             try:
                 agent = Agent(**agent_data)
-                
+
                 # Apply filters
                 if filters.status and agent.status != filters.status:
                     continue
@@ -168,12 +179,12 @@ async def list_agents(
                     continue
                 if search and search.lower() not in agent.name.lower():
                     continue
-                
+
                 agents.append(agent)
-                
+
             except Exception as e:
                 logger.warning(f"Error parsing agent data for {agent_id}: {e}")
-        
+
         # Sort agents
         reverse_sort = sort_order == "desc"
         if sort_by == "name":
@@ -184,36 +195,36 @@ async def list_agents(
             agents.sort(key=lambda a: a.updated_at, reverse=reverse_sort)
         else:  # default to created_at
             agents.sort(key=lambda a: a.created_at, reverse=reverse_sort)
-        
+
         # Apply pagination
         total_count = len(agents)
-        paginated_agents = agents[skip:skip + limit]
-        
+        paginated_agents = agents[skip : skip + limit]
+
         # Add pagination headers
         response_headers = {
             "X-Total-Count": str(total_count),
             "X-Page-Size": str(limit),
             "X-Current-Page": str(skip // limit + 1),
-            "X-Total-Pages": str((total_count + limit - 1) // limit)
+            "X-Total-Pages": str((total_count + limit - 1) // limit),
         }
-        
+
         return JSONResponse(
             content=[agent.dict() for agent in paginated_agents],
-            headers=response_headers
+            headers=response_headers,
         )
-        
+
     except Exception as e:
         logger.error(f"Error listing agents: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to retrieve agents"
+            detail="Failed to retrieve agents",
         )
 
 
 @router.get(
     "/{agent_id}",
     response_model=Agent,
-    summary="Get agent by ID with detailed information"
+    summary="Get agent by ID with detailed information",
 )
 @api_enhancement_service.cache_response(ttl=30, prefix="agent_detail")
 @api_enhancement_service.rate_limit(requests_per_minute=200)
@@ -222,10 +233,9 @@ async def get_agent(agent_id: str, request: Request):
     agent = await get_agent_from_cache_or_storage(agent_id)
     if not agent:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Agent {agent_id} not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Agent {agent_id} not found"
         )
-    
+
     return agent
 
 
@@ -233,20 +243,20 @@ async def get_agent(agent_id: str, request: Request):
     "/",
     response_model=Agent,
     status_code=status.HTTP_201_CREATED,
-    summary="Create a new agent"
+    summary="Create a new agent",
 )
 @api_enhancement_service.rate_limit(requests_per_minute=20, per_user=True)
 @require_auth
 async def create_agent(
     request: AgentCreateRequest,
     current_user: dict = Depends(get_current_user),
-    background_tasks_service=Depends(lambda: background_task_service)
+    background_tasks_service=Depends(lambda: background_task_service),
 ):
     """Create a new agent with configuration"""
     try:
         # Generate agent ID
         agent_id = str(uuid4())
-        
+
         # Create agent
         agent = Agent(
             id=agent_id,
@@ -254,55 +264,57 @@ async def create_agent(
             type=request.type,
             configuration=request.configuration or AgentConfiguration(),
             tags=request.tags or [],
-            metadata=request.metadata or {}
+            metadata=request.metadata or {},
         )
-        
+
         # Cache agent
         await cache_agent(agent)
-        
+
         # Invalidate list cache
         await api_enhancement_service.invalidate_cache("agents_list")
-        
+
         # Submit background task for agent initialization
         task_id = await background_task_service.submit_task(
             "process_agent_configuration",
             task_args=(agent_id, agent.configuration.dict()),
             priority=TaskPriority.HIGH,
-            metadata={"agent_name": agent.name, "created_by": current_user.get("id")}
+            metadata={"agent_name": agent.name, "created_by": current_user.get("id")},
         )
-        
+
         # Broadcast agent creation
-        await enhanced_websocket_manager.broadcast_to_all({
-            "type": MessageType.AGENT_UPDATE,
-            "data": {
-                "event": "agent_created",
-                "agent": agent.dict(),
-                "background_task_id": task_id
+        await enhanced_websocket_manager.broadcast_to_all(
+            {
+                "type": MessageType.AGENT_UPDATE,
+                "data": {
+                    "event": "agent_created",
+                    "agent": agent.dict(),
+                    "background_task_id": task_id,
+                },
             }
-        })
-        
+        )
+
         logger.info(f"Created agent {agent_id}: {agent.name}")
         return agent
-        
+
     except Exception as e:
         logger.error(f"Error creating agent: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to create agent"
+            detail="Failed to create agent",
         )
 
 
 @router.put(
     "/{agent_id}",
     response_model=Agent,
-    summary="Update agent configuration and properties"
+    summary="Update agent configuration and properties",
 )
 @api_enhancement_service.rate_limit(requests_per_minute=50, per_user=True)
 @require_auth
 async def update_agent(
     agent_id: str,
     request: AgentUpdateRequest,
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user),
 ):
     """Update an existing agent"""
     try:
@@ -311,57 +323,54 @@ async def update_agent(
         if not agent:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Agent {agent_id} not found"
+                detail=f"Agent {agent_id} not found",
             )
-        
+
         # Update fields
         update_data = request.dict(exclude_unset=True)
         for field, value in update_data.items():
             setattr(agent, field, value)
-        
+
         agent.updated_at = datetime.utcnow()
-        
+
         # Cache updated agent
         await cache_agent(agent)
-        
+
         # Invalidate caches
         await api_enhancement_service.invalidate_cache("agents_list")
         await api_enhancement_service.invalidate_cache("agent_detail")
-        
+
         # Broadcast update
-        await enhanced_websocket_manager.broadcast_to_all({
-            "type": MessageType.AGENT_UPDATE,
-            "data": {
-                "event": "agent_updated",
-                "agent": agent.dict(),
-                "updated_by": current_user.get("id")
+        await enhanced_websocket_manager.broadcast_to_all(
+            {
+                "type": MessageType.AGENT_UPDATE,
+                "data": {
+                    "event": "agent_updated",
+                    "agent": agent.dict(),
+                    "updated_by": current_user.get("id"),
+                },
             }
-        })
-        
+        )
+
         logger.info(f"Updated agent {agent_id}")
         return agent
-        
+
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error updating agent {agent_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to update agent"
+            detail="Failed to update agent",
         )
 
 
 @router.delete(
-    "/{agent_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
-    summary="Delete an agent"
+    "/{agent_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete an agent"
 )
 @api_enhancement_service.rate_limit(requests_per_minute=20, per_user=True)
 @require_auth
-async def delete_agent(
-    agent_id: str,
-    current_user: dict = Depends(get_current_user)
-):
+async def delete_agent(agent_id: str, current_user: dict = Depends(get_current_user)):
     """Delete an agent"""
     try:
         # Check if agent exists
@@ -369,63 +378,64 @@ async def delete_agent(
         if not agent:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Agent {agent_id} not found"
+                detail=f"Agent {agent_id} not found",
             )
-        
+
         # Remove from cache
         await invalidate_agent_cache(agent_id)
-        
+
         # Invalidate list cache
         await api_enhancement_service.invalidate_cache("agents_list")
-        
+
         # Broadcast deletion
-        await enhanced_websocket_manager.broadcast_to_all({
-            "type": MessageType.AGENT_UPDATE,
-            "data": {
-                "event": "agent_deleted",
-                "agent_id": agent_id,
-                "deleted_by": current_user.get("id")
+        await enhanced_websocket_manager.broadcast_to_all(
+            {
+                "type": MessageType.AGENT_UPDATE,
+                "data": {
+                    "event": "agent_deleted",
+                    "agent_id": agent_id,
+                    "deleted_by": current_user.get("id"),
+                },
             }
-        })
-        
+        )
+
         logger.info(f"Deleted agent {agent_id}")
-        
+
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error deleting agent {agent_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to delete agent"
+            detail="Failed to delete agent",
         )
 
 
-@router.post(
-    "/bulk-operation",
-    summary="Perform bulk operations on multiple agents"
-)
+@router.post("/bulk-operation", summary="Perform bulk operations on multiple agents")
 @api_enhancement_service.rate_limit(requests_per_minute=10, per_user=True)
 @require_auth
 async def bulk_agent_operation(
     request: BulkAgentOperation,
     current_user: dict = Depends(get_current_user),
-    background_tasks_service=Depends(lambda: background_task_service)
+    background_tasks_service=Depends(lambda: background_task_service),
 ):
     """Perform bulk operations on multiple agents"""
     try:
         results = []
-        
+
         for agent_id in request.agent_ids:
             try:
                 agent = await get_agent_from_cache_or_storage(agent_id)
                 if not agent:
-                    results.append({
-                        "agent_id": agent_id,
-                        "success": False,
-                        "error": "Agent not found"
-                    })
+                    results.append(
+                        {
+                            "agent_id": agent_id,
+                            "success": False,
+                            "error": "Agent not found",
+                        }
+                    )
                     continue
-                
+
                 # Perform operation
                 if request.operation == "start":
                     agent.status = "active"
@@ -435,147 +445,144 @@ async def bulk_agent_operation(
                     agent.status = "restarting"
                 elif request.operation == "delete":
                     await invalidate_agent_cache(agent_id)
-                    results.append({
-                        "agent_id": agent_id,
-                        "success": True,
-                        "action": "deleted"
-                    })
+                    results.append(
+                        {"agent_id": agent_id, "success": True, "action": "deleted"}
+                    )
                     continue
                 elif request.operation == "update" and request.parameters:
                     for field, value in request.parameters.items():
                         if hasattr(agent, field):
                             setattr(agent, field, value)
-                
+
                 agent.updated_at = datetime.utcnow()
                 await cache_agent(agent)
-                
-                results.append({
-                    "agent_id": agent_id,
-                    "success": True,
-                    "action": request.operation
-                })
-                
+
+                results.append(
+                    {"agent_id": agent_id, "success": True, "action": request.operation}
+                )
+
             except Exception as e:
                 logger.error(f"Error in bulk operation for agent {agent_id}: {e}")
-                results.append({
-                    "agent_id": agent_id,
-                    "success": False,
-                    "error": str(e)
-                })
-        
+                results.append(
+                    {"agent_id": agent_id, "success": False, "error": str(e)}
+                )
+
         # Invalidate caches
         await api_enhancement_service.invalidate_cache("agents_list")
-        
+
         # Broadcast bulk operation
-        await enhanced_websocket_manager.broadcast_to_all({
-            "type": MessageType.AGENT_UPDATE,
-            "data": {
-                "event": "bulk_operation",
-                "operation": request.operation,
-                "results": results,
-                "performed_by": current_user.get("id")
+        await enhanced_websocket_manager.broadcast_to_all(
+            {
+                "type": MessageType.AGENT_UPDATE,
+                "data": {
+                    "event": "bulk_operation",
+                    "operation": request.operation,
+                    "results": results,
+                    "performed_by": current_user.get("id"),
+                },
             }
-        })
-        
+        )
+
         return {
             "operation": request.operation,
             "total_agents": len(request.agent_ids),
             "successful": len([r for r in results if r["success"]]),
             "failed": len([r for r in results if not r["success"]]),
-            "results": results
+            "results": results,
         }
-        
+
     except Exception as e:
         logger.error(f"Error in bulk agent operation: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to perform bulk operation"
+            detail="Failed to perform bulk operation",
         )
 
 
 @router.post(
-    "/{agent_id}/configuration/upload",
-    summary="Upload agent configuration file"
+    "/{agent_id}/configuration/upload", summary="Upload agent configuration file"
 )
 @api_enhancement_service.rate_limit(requests_per_minute=10, per_user=True)
 @require_auth
 async def upload_agent_configuration(
     agent_id: str,
     file: UploadFile = File(...),
-    current_user: dict = Depends(get_current_user)
+    current_user: dict = Depends(get_current_user),
 ):
     """Upload and apply agent configuration from file"""
     try:
         # Validate file type
-        if not file.filename.endswith(('.json', '.yaml', '.yml')):
+        if not file.filename.endswith((".json", ".yaml", ".yml")):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Only JSON and YAML configuration files are supported"
+                detail="Only JSON and YAML configuration files are supported",
             )
-        
+
         # Get agent
         agent = await get_agent_from_cache_or_storage(agent_id)
         if not agent:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Agent {agent_id} not found"
+                detail=f"Agent {agent_id} not found",
             )
-        
+
         # Read and parse configuration
         content = await file.read()
-        
-        if file.filename.endswith('.json'):
+
+        if file.filename.endswith(".json"):
             import json
-            config_data = json.loads(content.decode('utf-8'))
+
+            config_data = json.loads(content.decode("utf-8"))
         else:  # YAML
             import yaml
-            config_data = yaml.safe_load(content.decode('utf-8'))
-        
+
+            config_data = yaml.safe_load(content.decode("utf-8"))
+
         # Update agent configuration
         try:
             agent.configuration = AgentConfiguration(**config_data)
             agent.updated_at = datetime.utcnow()
-            
+
             await cache_agent(agent)
             await api_enhancement_service.invalidate_cache("agent_detail")
-            
+
             # Submit background task for configuration processing
             task_id = await background_task_service.submit_task(
                 "process_agent_configuration",
                 task_args=(agent_id, agent.configuration.dict()),
                 metadata={
                     "uploaded_by": current_user.get("id"),
-                    "filename": file.filename
-                }
+                    "filename": file.filename,
+                },
             )
-            
+
             return {
                 "message": "Configuration uploaded successfully",
                 "agent_id": agent_id,
                 "background_task_id": task_id,
-                "configuration": agent.configuration.dict()
+                "configuration": agent.configuration.dict(),
             }
-            
+
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Invalid configuration format: {str(e)}"
+                detail=f"Invalid configuration format: {str(e)}",
             )
-            
+
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Error uploading configuration for agent {agent_id}: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to upload configuration"
+            detail="Failed to upload configuration",
         )
 
 
 @router.get(
     "/{agent_id}/metrics",
     response_model=AgentMetrics,
-    summary="Get detailed agent metrics"
+    summary="Get detailed agent metrics",
 )
 @api_enhancement_service.cache_response(ttl=30)
 @api_enhancement_service.rate_limit(requests_per_minute=100)
@@ -584,38 +591,36 @@ async def get_agent_metrics(agent_id: str, request: Request):
     agent = await get_agent_from_cache_or_storage(agent_id)
     if not agent:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Agent {agent_id} not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Agent {agent_id} not found"
         )
-    
+
     return agent.metrics
 
 
-@router.get(
-    "/{agent_id}/logs",
-    summary="Get agent execution logs"
-)
+@router.get("/{agent_id}/logs", summary="Get agent execution logs")
 @api_enhancement_service.rate_limit(requests_per_minute=50)
 async def get_agent_logs(
     agent_id: str,
     limit: int = Query(100, ge=1, le=1000),
-    level: Optional[str] = Query(None, regex="^(DEBUG|INFO|WARNING|ERROR|CRITICAL)$")
+    level: Optional[str] = Query(None, regex="^(DEBUG|INFO|WARNING|ERROR|CRITICAL)$"),
 ):
     """Get execution logs for a specific agent"""
     # This would typically read from log files or a logging service
     # For now, return mock data
     logs = []
     for i in range(min(limit, 50)):
-        logs.append({
-            "timestamp": datetime.utcnow().isoformat(),
-            "level": "INFO",
-            "message": f"Agent {agent_id} executed task successfully",
-            "details": {"task_id": f"task_{i}", "duration": 1.5 + i * 0.1}
-        })
-    
+        logs.append(
+            {
+                "timestamp": datetime.utcnow().isoformat(),
+                "level": "INFO",
+                "message": f"Agent {agent_id} executed task successfully",
+                "details": {"task_id": f"task_{i}", "duration": 1.5 + i * 0.1},
+            }
+        )
+
     return {
         "agent_id": agent_id,
         "logs": logs,
         "total_count": len(logs),
-        "level_filter": level
+        "level_filter": level,
     }

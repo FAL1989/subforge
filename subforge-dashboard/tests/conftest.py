@@ -4,23 +4,20 @@ Global pytest configuration and fixtures for SubForge Dashboard tests
 
 import asyncio
 import os
-import pytest
-import pytest_asyncio
-from typing import AsyncGenerator, Generator
-from unittest.mock import AsyncMock, MagicMock
-import tempfile
 import shutil
-from pathlib import Path
-import uuid
 
 # Backend imports
 import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
+import tempfile
+import uuid
+from pathlib import Path
+from typing import AsyncGenerator, Generator
+from unittest.mock import AsyncMock, MagicMock
 
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.pool import StaticPool
-from httpx import AsyncClient
-from fastapi.testclient import TestClient
+import pytest
+import pytest_asyncio
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
 
 from app.database.base import Base
 from app.database.session import get_db
@@ -28,8 +25,10 @@ from app.main import app
 from app.models.agent import Agent
 from app.models.task import Task
 from app.models.workflow import Workflow
-from app.models.system_metrics import SystemMetrics
-
+from fastapi.testclient import TestClient
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.pool import StaticPool
 
 # Test database configuration
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
@@ -42,14 +41,14 @@ async def test_engine():
         TEST_DATABASE_URL,
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
-        echo=False
+        echo=False,
     )
-    
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    
+
     yield engine
-    
+
     await engine.dispose()
 
 
@@ -59,7 +58,7 @@ async def test_session(test_engine) -> AsyncGenerator[AsyncSession, None]:
     async_session = async_sessionmaker(
         test_engine, class_=AsyncSession, expire_on_commit=False
     )
-    
+
     async with async_session() as session:
         yield session
 
@@ -67,15 +66,15 @@ async def test_session(test_engine) -> AsyncGenerator[AsyncSession, None]:
 @pytest_asyncio.fixture
 async def test_client(test_session) -> AsyncGenerator[AsyncClient, None]:
     """Create test HTTP client with dependency override"""
-    
+
     async def override_get_db():
         yield test_session
-    
+
     app.dependency_overrides[get_db] = override_get_db
-    
+
     async with AsyncClient(app=app, base_url="http://testserver") as client:
         yield client
-    
+
     # Clean up
     app.dependency_overrides.clear()
 
@@ -83,15 +82,15 @@ async def test_client(test_session) -> AsyncGenerator[AsyncClient, None]:
 @pytest.fixture
 def sync_client(test_session) -> Generator[TestClient, None, None]:
     """Create synchronous test client for WebSocket testing"""
-    
+
     async def override_get_db():
         yield test_session
-    
+
     app.dependency_overrides[get_db] = override_get_db
-    
+
     with TestClient(app) as client:
         yield client
-    
+
     app.dependency_overrides.clear()
 
 
@@ -140,10 +139,7 @@ def sample_agent_data():
         "model": "claude-3-sonnet",
         "tools": ["read", "write", "edit", "bash"],
         "capabilities": ["python", "fastapi", "sqlalchemy"],
-        "configuration": {
-            "max_concurrent_tasks": 3,
-            "timeout": 300
-        }
+        "configuration": {"max_concurrent_tasks": 3, "timeout": 300},
     }
 
 
@@ -156,10 +152,7 @@ def sample_task_data():
         "priority": "medium",
         "status": "pending",
         "agent_id": None,
-        "metadata": {
-            "estimated_duration": 600,
-            "complexity": "medium"
-        }
+        "metadata": {"estimated_duration": 600, "complexity": "medium"},
     }
 
 
@@ -170,22 +163,11 @@ def sample_workflow_data():
         "name": "test-workflow",
         "description": "Test workflow for validation",
         "status": "pending",
-        "configuration": {
-            "max_parallel_tasks": 2,
-            "timeout": 1800
-        },
+        "configuration": {"max_parallel_tasks": 2, "timeout": 1800},
         "steps": [
-            {
-                "name": "step1",
-                "type": "task",
-                "dependencies": []
-            },
-            {
-                "name": "step2", 
-                "type": "task",
-                "dependencies": ["step1"]
-            }
-        ]
+            {"name": "step1", "type": "task", "dependencies": []},
+            {"name": "step2", "type": "task", "dependencies": ["step1"]},
+        ],
     }
 
 
@@ -233,12 +215,12 @@ def test_files_dir(temp_dir):
     """Create test files directory with sample files"""
     files_dir = temp_dir / "test_files"
     files_dir.mkdir()
-    
+
     # Create sample files
     (files_dir / "test.txt").write_text("Test content")
     (files_dir / "test.py").write_text("print('Hello World')")
     (files_dir / "test.json").write_text('{"key": "value"}')
-    
+
     return files_dir
 
 
@@ -259,7 +241,7 @@ def performance_config():
         "max_response_time": 1.0,  # seconds
         "max_concurrent_requests": 100,
         "test_duration": 30,  # seconds
-        "acceptable_error_rate": 0.01  # 1%
+        "acceptable_error_rate": 0.01,  # 1%
     }
 
 
@@ -271,18 +253,14 @@ def security_payloads():
         "sql_injection": [
             "'; DROP TABLE agents; --",
             "' OR '1'='1",
-            "1; EXEC xp_cmdshell('dir');--"
+            "1; EXEC xp_cmdshell('dir');--",
         ],
         "xss": [
             "<script>alert('XSS')</script>",
             "javascript:alert('XSS')",
-            "<img src=x onerror=alert('XSS')>"
+            "<img src=x onerror=alert('XSS')>",
         ],
-        "command_injection": [
-            "; ls -la",
-            "| cat /etc/passwd",
-            "$(whoami)"
-        ]
+        "command_injection": ["; ls -la", "| cat /etc/passwd", "$(whoami)"],
     }
 
 
@@ -291,7 +269,7 @@ def security_payloads():
 async def cleanup_test_data(test_session):
     """Automatically cleanup test data after each test"""
     yield
-    
+
     # Clean up all test data
     await test_session.execute("DELETE FROM agents")
     await test_session.execute("DELETE FROM tasks")
@@ -308,9 +286,9 @@ def setup_test_environment():
     os.environ["DATABASE_URL"] = TEST_DATABASE_URL
     os.environ["SECRET_KEY"] = "test-secret-key"
     os.environ["REDIS_URL"] = "redis://localhost:6379/15"
-    
+
     yield
-    
+
     # Clean up
     for key in ["TESTING", "DATABASE_URL", "SECRET_KEY", "REDIS_URL"]:
         if key in os.environ:
@@ -327,4 +305,6 @@ def assert_dict_subset(subset: dict, full_dict: dict):
     """Assert that subset is contained in full_dict"""
     for key, value in subset.items():
         assert key in full_dict, f"Key '{key}' not found in full_dict"
-        assert full_dict[key] == value, f"Value mismatch for key '{key}': expected {value}, got {full_dict[key]}"
+        assert (
+            full_dict[key] == value
+        ), f"Value mismatch for key '{key}': expected {value}, got {full_dict[key]}"

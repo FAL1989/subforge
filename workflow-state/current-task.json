@@ -1,0 +1,146 @@
+{
+  "workflow_id": "wf-example-001",
+  "request_id": "req-example-001",
+  "timestamp": "2024-01-01T10:00:00Z",
+  "original_request": "Example: Implement user authentication",
+  "enhanced_request": "Implement secure user authentication with email/password, including registration, login, logout, password reset, and session management",
+  "complexity_analysis": {
+    "level": "high",
+    "score": 8,
+    "factors": {
+      "files_affected": 15,
+      "external_integrations": 2,
+      "security_sensitive": true,
+      "performance_critical": false,
+      "breaking_changes": false,
+      "new_technology": false
+    }
+  },
+  "research_conducted": true,
+  "research_results": {
+    "best_practices": [
+      {
+        "status": "completed",
+        "task": "research_context management",
+        "findings": "Analysis from perplexity",
+        "recommendations": []
+      }
+    ],
+    "examples": [
+      {
+        "status": "completed",
+        "task": "examples_context management",
+        "findings": "Analysis from github",
+        "recommendations": []
+      }
+    ],
+    "documentation": [
+      {
+        "status": "completed",
+        "task": "docs_context management",
+        "findings": "Analysis from ref",
+        "recommendations": []
+      }
+    ],
+    "recommendations": []
+  },
+  "task_breakdown": [
+    {
+      "task_id": "task-001",
+      "description": "Create user database schema",
+      "assigned_to": "@data-scientist",
+      "status": "completed",
+      "dependencies": [],
+      "can_parallel": true,
+      "output": "/migrations/001-users.sql"
+    },
+    {
+      "task_id": "task-002",
+      "description": "Implement authentication API",
+      "assigned_to": "@backend-developer",
+      "status": "in_progress",
+      "dependencies": [
+        "task-001"
+      ],
+      "can_parallel": false,
+      "output": "/api/auth/*"
+    },
+    {
+      "task_id": "task-003",
+      "description": "Create login/register UI",
+      "assigned_to": "@frontend-developer",
+      "status": "pending",
+      "dependencies": [
+        "task-002"
+      ],
+      "can_parallel": false,
+      "output": "/components/auth/*"
+    }
+  ],
+  "execution_plan": {
+    "parallel_groups": [
+      [
+        "task-001"
+      ]
+    ],
+    "sequential_chain": [
+      "task-002",
+      "task-003"
+    ]
+  },
+  "agent_assignments": {
+    "@data-scientist": [
+      "task-001"
+    ],
+    "@backend-developer": [
+      "task-002"
+    ],
+    "@frontend-developer": [
+      "task-003"
+    ]
+  },
+  "current_status": "executing",
+  "progress": {
+    "total_tasks": 3,
+    "completed": 1,
+    "in_progress": 1,
+    "pending": 1,
+    "blocked": 0
+  },
+  "shared_decisions": [
+    {
+      "decision": "Use NextAuth.js for authentication",
+      "rationale": "Best integration with Next.js, well-maintained, secure defaults",
+      "made_by": "@orchestrator",
+      "timestamp": "2024-01-01T10:15:00Z"
+    }
+  ],
+  "blockers": [],
+  "artifacts": {
+    "research_results": "/workflow-state/research-results.md",
+    "database_schema": "/workflow-state/schemas/users.sql",
+    "api_specification": "/workflow-state/specs/auth-api.yaml"
+  },
+  "quality_gates": {
+    "all_tasks_complete": false,
+    "tests_passing": null,
+    "security_reviewed": false,
+    "performance_validated": false,
+    "documentation_updated": false
+  },
+  "completion_estimate": "2024-01-01T14:00:00Z",
+  "actual_completion": null,
+  "notes": "This is an example task structure for reference",
+  "analysis_results": {
+    "summary": "Parallel analysis completed",
+    "findings": {
+      "@code-reviewer": "Analysis from @code-reviewer",
+      "@test-engineer": "Analysis from @test-engineer",
+      "@backend-developer": "Analysis from @backend-developer",
+      "@frontend-developer": "Analysis from @frontend-developer",
+      "@data-scientist": "Analysis from @data-scientist"
+    },
+    "recommendations": [],
+    "metrics": {}
+  }
+}

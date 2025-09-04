@@ -6,8 +6,9 @@ Setup configuration for pip installation
 Created: 2025-09-02 19:55 UTC-3 São Paulo
 """
 
-from setuptools import setup, find_packages
 from pathlib import Path
+
+from setuptools import find_packages, setup
 
 # Read the README for long description
 here = Path(__file__).parent.absolute()
@@ -65,6 +66,8 @@ setup(
             "pytest>=7.0.0",
             "pytest-asyncio>=0.21.0",
             "pytest-cov>=4.0.0",
+            "isort>=5.12.0",
+            "autoflake>=2.0.0",
         ],
         "full": [
             "typer>=0.9.0",
@@ -73,12 +76,14 @@ setup(
             "black>=23.0.0",
             "autopep8>=2.0.0",
             "ruff>=0.1.0",
+            "isort>=5.12.0",
+            "autoflake>=2.0.0",
         ],
     },
     entry_points={
         "console_scripts": [
             "subforge=subforge.simple_cli:main",
-            "subforge-rich=subforge.cli:main [rich]",
+            "subforge-rich=subforge.cli:main",
         ],
     },
     classifiers=[

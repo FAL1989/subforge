@@ -2,10 +2,11 @@
 Database session management and connection handling
 """
 
-from sqlalchemy import create_engine
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, Session
 from typing import AsyncGenerator
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from ..core.config import settings
 
@@ -17,10 +18,7 @@ engine = create_engine(
 )
 
 SessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine,
-    class_=Session
+    autocommit=False, autoflush=False, bind=engine, class_=Session
 )
 
 # Asynchronous engine and session

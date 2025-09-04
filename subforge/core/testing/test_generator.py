@@ -2,12 +2,11 @@
 Intelligent Test Generation System with Context Engineering Integration
 """
 
-import os
-import json
-from typing import Dict, List, Any, Optional
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
+from typing import Any, Dict, List, Optional
+
 
 class TestType(Enum):
     UNIT = "unit"
@@ -16,12 +15,14 @@ class TestType(Enum):
     PERFORMANCE = "performance"
     SECURITY = "security"
 
+
 class TestFramework(Enum):
     PYTEST = "pytest"
     UNITTEST = "unittest"
     JEST = "jest"
     MOCHA = "mocha"
     JUNIT = "junit"
+
 
 @dataclass
 class TestCase:
@@ -34,6 +35,7 @@ class TestCase:
     dependencies: List[str]
     assertions: List[str]
 
+
 @dataclass
 class TestSuite:
     name: str
@@ -43,23 +45,24 @@ class TestSuite:
     teardown_code: Optional[str] = None
     fixtures: Optional[Dict[str, str]] = None
 
+
 class TestGenerator:
     """
     Intelligent test generator that creates comprehensive test suites
     based on project analysis and Context Engineering principles
     """
-    
+
     def __init__(self, templates_dir: str):
         self.templates_dir = Path(templates_dir)
         self.test_templates = self._load_test_templates()
-        
+
     def _load_test_templates(self) -> Dict[str, Dict[str, Any]]:
         """Load test templates for different frameworks and patterns"""
         templates = {}
-        
+
         # Python/pytest templates
-        templates['python'] = {
-            'unit_test': '''
+        templates["python"] = {
+            "unit_test": '''
 import pytest
 from unittest.mock import Mock, patch
 from {module_path} import {class_name}
@@ -92,7 +95,7 @@ class Test{class_name}:
         with pytest.raises({expected_exception}):
             {fixture_name}.{method_name}({error_args})
 ''',
-            'integration_test': '''
+            "integration_test": '''
 import pytest
 import asyncio
 from {module_path} import {service_class}
@@ -120,7 +123,7 @@ class Test{service_class}Integration:
         # Assert
         {integration_assert}
 ''',
-            'api_test': '''
+            "api_test": '''
 import pytest
 import httpx
 from fastapi.testclient import TestClient
@@ -153,12 +156,12 @@ class Test{api_name}API:
         invalid_payload = {invalid_payload}
         response = client.post("{endpoint_path}", json=invalid_payload)
         assert response.status_code == 422
-'''
+''',
         }
-        
+
         # JavaScript/Jest templates
-        templates['javascript'] = {
-            'unit_test': '''
+        templates["javascript"] = {
+            "unit_test": """
 const {{ {class_name} }} = require('{module_path}');
 
 describe('{class_name}', () => {{
@@ -194,8 +197,8 @@ describe('{class_name}', () => {{
         }});
     }});
 }});
-''',
-            'api_test': '''
+""",
+            "api_test": """
 const request = require('supertest');
 const app = require('{app_path}');
 
@@ -232,84 +235,86 @@ describe('{api_name} API', () => {{
         }});
     }});
 }});
-'''
+""",
         }
-        
+
         return templates
-    
-    def generate_test_suite_for_project(self, 
-                                       project_profile: Dict[str, Any],
-                                       use_case: str = None) -> TestSuite:
+
+    def generate_test_suite_for_project(
+        self, project_profile: Dict[str, Any], use_case: str = None
+    ) -> TestSuite:
         """
         Generate comprehensive test suite based on project analysis
         """
         primary_language = self._detect_primary_language(project_profile)
         framework = self._select_test_framework(primary_language)
-        
+
         test_cases = []
-        
+
         # Generate unit tests
         test_cases.extend(self._generate_unit_tests(project_profile, framework))
-        
+
         # Generate integration tests
         test_cases.extend(self._generate_integration_tests(project_profile, framework))
-        
+
         # Generate API tests if applicable
         if self._has_api_components(project_profile):
             test_cases.extend(self._generate_api_tests(project_profile, framework))
-        
+
         # Generate performance tests
-        if project_profile.get('complexity') != 'simple':
-            test_cases.extend(self._generate_performance_tests(project_profile, framework))
-        
+        if project_profile.get("complexity") != "simple":
+            test_cases.extend(
+                self._generate_performance_tests(project_profile, framework)
+            )
+
         # Generate security tests
         test_cases.extend(self._generate_security_tests(project_profile, framework))
-        
+
         suite_name = f"{project_profile['name']}_comprehensive_tests"
-        
+
         return TestSuite(
             name=suite_name,
             description=f"Comprehensive test suite for {project_profile['name']}",
             test_cases=test_cases,
             setup_code=self._generate_setup_code(project_profile, framework),
             teardown_code=self._generate_teardown_code(project_profile, framework),
-            fixtures=self._generate_fixtures(project_profile, framework)
+            fixtures=self._generate_fixtures(project_profile, framework),
         )
-    
+
     def _detect_primary_language(self, project_profile: Dict[str, Any]) -> str:
         """Detect primary programming language"""
-        languages = project_profile.get('technology_stack', {}).get('languages', [])
-        
+        languages = project_profile.get("technology_stack", {}).get("languages", [])
+
         # Priority order for test generation
-        priority_languages = ['python', 'javascript', 'typescript', 'java', 'go']
-        
+        priority_languages = ["python", "javascript", "typescript", "java", "go"]
+
         for lang in priority_languages:
             if lang in languages:
                 return lang
-                
-        return languages[0] if languages else 'python'
-    
+
+        return languages[0] if languages else "python"
+
     def _select_test_framework(self, language: str) -> TestFramework:
         """Select appropriate test framework for language"""
         framework_map = {
-            'python': TestFramework.PYTEST,
-            'javascript': TestFramework.JEST,
-            'typescript': TestFramework.JEST,
-            'java': TestFramework.JUNIT,
-            'go': TestFramework.PYTEST  # Go has its own but we'll use pytest pattern
+            "python": TestFramework.PYTEST,
+            "javascript": TestFramework.JEST,
+            "typescript": TestFramework.JEST,
+            "java": TestFramework.JUNIT,
+            "go": TestFramework.PYTEST,  # Go has its own but we'll use pytest pattern
         }
-        
+
         return framework_map.get(language, TestFramework.PYTEST)
-    
-    def _generate_unit_tests(self, 
-                           project_profile: Dict[str, Any], 
-                           framework: TestFramework) -> List[TestCase]:
+
+    def _generate_unit_tests(
+        self, project_profile: Dict[str, Any], framework: TestFramework
+    ) -> List[TestCase]:
         """Generate unit tests based on project structure"""
         test_cases = []
-        
+
         # Analyze project files to identify testable units
         testable_modules = self._identify_testable_modules(project_profile)
-        
+
         for module in testable_modules:
             test_case = TestCase(
                 name=f"test_{module['name']}_unit",
@@ -318,23 +323,23 @@ describe('{api_name} API', () => {{
                 framework=framework,
                 file_path=f"tests/unit/test_{module['name']}.py",
                 code=self._generate_unit_test_code(module, framework),
-                dependencies=module.get('dependencies', []),
-                assertions=self._generate_unit_assertions(module)
+                dependencies=module.get("dependencies", []),
+                assertions=self._generate_unit_assertions(module),
             )
             test_cases.append(test_case)
-        
+
         return test_cases
-    
-    def _generate_integration_tests(self,
-                                  project_profile: Dict[str, Any],
-                                  framework: TestFramework) -> List[TestCase]:
+
+    def _generate_integration_tests(
+        self, project_profile: Dict[str, Any], framework: TestFramework
+    ) -> List[TestCase]:
         """Generate integration tests for system components"""
         test_cases = []
-        
-        if project_profile.get('architecture_pattern') == 'microservices':
+
+        if project_profile.get("architecture_pattern") == "microservices":
             # Generate service integration tests
             services = self._identify_services(project_profile)
-            
+
             for service in services:
                 test_case = TestCase(
                     name=f"test_{service['name']}_integration",
@@ -343,21 +348,21 @@ describe('{api_name} API', () => {{
                     framework=framework,
                     file_path=f"tests/integration/test_{service['name']}_integration.py",
                     code=self._generate_integration_test_code(service, framework),
-                    dependencies=service.get('dependencies', []),
-                    assertions=self._generate_integration_assertions(service)
+                    dependencies=service.get("dependencies", []),
+                    assertions=self._generate_integration_assertions(service),
                 )
                 test_cases.append(test_case)
-        
+
         return test_cases
-    
-    def _generate_api_tests(self,
-                           project_profile: Dict[str, Any],
-                           framework: TestFramework) -> List[TestCase]:
+
+    def _generate_api_tests(
+        self, project_profile: Dict[str, Any], framework: TestFramework
+    ) -> List[TestCase]:
         """Generate API tests for REST/GraphQL endpoints"""
         test_cases = []
-        
+
         api_endpoints = self._identify_api_endpoints(project_profile)
-        
+
         for endpoint in api_endpoints:
             test_case = TestCase(
                 name=f"test_{endpoint['name']}_api",
@@ -366,22 +371,22 @@ describe('{api_name} API', () => {{
                 framework=framework,
                 file_path=f"tests/api/test_{endpoint['name']}_api.py",
                 code=self._generate_api_test_code(endpoint, framework),
-                dependencies=['httpx', 'fastapi[testing]'],
-                assertions=self._generate_api_assertions(endpoint)
+                dependencies=["httpx", "fastapi[testing]"],
+                assertions=self._generate_api_assertions(endpoint),
             )
             test_cases.append(test_case)
-        
+
         return test_cases
-    
-    def _generate_performance_tests(self,
-                                   project_profile: Dict[str, Any],
-                                   framework: TestFramework) -> List[TestCase]:
+
+    def _generate_performance_tests(
+        self, project_profile: Dict[str, Any], framework: TestFramework
+    ) -> List[TestCase]:
         """Generate performance and load tests"""
         test_cases = []
-        
+
         # Generate load tests for critical paths
         critical_components = self._identify_critical_components(project_profile)
-        
+
         for component in critical_components:
             test_case = TestCase(
                 name=f"test_{component['name']}_performance",
@@ -390,21 +395,21 @@ describe('{api_name} API', () => {{
                 framework=framework,
                 file_path=f"tests/performance/test_{component['name']}_performance.py",
                 code=self._generate_performance_test_code(component, framework),
-                dependencies=['pytest-benchmark', 'locust'],
-                assertions=self._generate_performance_assertions(component)
+                dependencies=["pytest-benchmark", "locust"],
+                assertions=self._generate_performance_assertions(component),
             )
             test_cases.append(test_case)
-        
+
         return test_cases
-    
-    def _generate_security_tests(self,
-                                project_profile: Dict[str, Any],
-                                framework: TestFramework) -> List[TestCase]:
+
+    def _generate_security_tests(
+        self, project_profile: Dict[str, Any], framework: TestFramework
+    ) -> List[TestCase]:
         """Generate security and vulnerability tests"""
         test_cases = []
-        
+
         security_concerns = self._identify_security_concerns(project_profile)
-        
+
         for concern in security_concerns:
             test_case = TestCase(
                 name=f"test_{concern['name']}_security",
@@ -413,64 +418,79 @@ describe('{api_name} API', () => {{
                 framework=framework,
                 file_path=f"tests/security/test_{concern['name']}_security.py",
                 code=self._generate_security_test_code(concern, framework),
-                dependencies=['pytest-security', 'bandit'],
-                assertions=self._generate_security_assertions(concern)
+                dependencies=["pytest-security", "bandit"],
+                assertions=self._generate_security_assertions(concern),
             )
             test_cases.append(test_case)
-        
+
         return test_cases
-    
+
     # Helper methods for analysis and code generation
-    def _identify_testable_modules(self, project_profile: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def _identify_testable_modules(
+        self, project_profile: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """Identify modules that need unit testing"""
         # This would analyze the actual project structure
         # For now, return example modules based on common patterns
         return [
-            {'name': 'core', 'type': 'module', 'dependencies': []},
-            {'name': 'utils', 'type': 'module', 'dependencies': []},
-            {'name': 'services', 'type': 'module', 'dependencies': ['core']}
+            {"name": "core", "type": "module", "dependencies": []},
+            {"name": "utils", "type": "module", "dependencies": []},
+            {"name": "services", "type": "module", "dependencies": ["core"]},
         ]
-    
-    def _identify_services(self, project_profile: Dict[str, Any]) -> List[Dict[str, Any]]:
+
+    def _identify_services(
+        self, project_profile: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """Identify services in microservices architecture"""
         return [
-            {'name': 'user_service', 'type': 'service', 'dependencies': ['database']},
-            {'name': 'auth_service', 'type': 'service', 'dependencies': ['cache']}
+            {"name": "user_service", "type": "service", "dependencies": ["database"]},
+            {"name": "auth_service", "type": "service", "dependencies": ["cache"]},
         ]
-    
-    def _identify_api_endpoints(self, project_profile: Dict[str, Any]) -> List[Dict[str, Any]]:
+
+    def _identify_api_endpoints(
+        self, project_profile: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """Identify API endpoints for testing"""
         return [
-            {'name': 'users', 'path': '/api/users', 'methods': ['GET', 'POST']},
-            {'name': 'auth', 'path': '/api/auth', 'methods': ['POST']}
+            {"name": "users", "path": "/api/users", "methods": ["GET", "POST"]},
+            {"name": "auth", "path": "/api/auth", "methods": ["POST"]},
         ]
-    
-    def _identify_critical_components(self, project_profile: Dict[str, Any]) -> List[Dict[str, Any]]:
+
+    def _identify_critical_components(
+        self, project_profile: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """Identify performance-critical components"""
         return [
-            {'name': 'data_processor', 'type': 'service', 'sla': '100ms'},
-            {'name': 'api_gateway', 'type': 'gateway', 'sla': '50ms'}
+            {"name": "data_processor", "type": "service", "sla": "100ms"},
+            {"name": "api_gateway", "type": "gateway", "sla": "50ms"},
         ]
-    
-    def _identify_security_concerns(self, project_profile: Dict[str, Any]) -> List[Dict[str, Any]]:
+
+    def _identify_security_concerns(
+        self, project_profile: Dict[str, Any]
+    ) -> List[Dict[str, Any]]:
         """Identify security testing areas"""
         return [
-            {'name': 'auth', 'description': 'Authentication and authorization'},
-            {'name': 'input_validation', 'description': 'Input validation and sanitization'}
+            {"name": "auth", "description": "Authentication and authorization"},
+            {
+                "name": "input_validation",
+                "description": "Input validation and sanitization",
+            },
         ]
-    
+
     def _has_api_components(self, project_profile: Dict[str, Any]) -> bool:
         """Check if project has API components"""
-        frameworks = project_profile.get('technology_stack', {}).get('frameworks', [])
-        api_frameworks = ['fastapi', 'flask', 'django', 'express', 'spring']
+        frameworks = project_profile.get("technology_stack", {}).get("frameworks", [])
+        api_frameworks = ["fastapi", "flask", "django", "express", "spring"]
         return any(fw in frameworks for fw in api_frameworks)
-    
-    def _generate_unit_test_code(self, module: Dict[str, Any], framework: TestFramework) -> str:
+
+    def _generate_unit_test_code(
+        self, module: Dict[str, Any], framework: TestFramework
+    ) -> str:
         """Generate unit test code for a module"""
-        template = self.test_templates.get('python', {}).get('unit_test', '')
+        template = self.test_templates.get("python", {}).get("unit_test", "")
         return template.format(
             module_path=f"src.{module['name']}",
-            class_name=module['name'].title(),
+            class_name=module["name"].title(),
             fixture_name=f"{module['name']}_instance",
             fixture_args="",
             method_name="process",
@@ -479,37 +499,43 @@ describe('{api_name} API', () => {{
             assert_code="assert result is not None\nassert result['status'] == 'success'",
             error_arrange_code="invalid_data = None",
             expected_exception="ValueError",
-            error_args="invalid_data"
+            error_args="invalid_data",
         )
-    
-    def _generate_integration_test_code(self, service: Dict[str, Any], framework: TestFramework) -> str:
+
+    def _generate_integration_test_code(
+        self, service: Dict[str, Any], framework: TestFramework
+    ) -> str:
         """Generate integration test code for a service"""
-        template = self.test_templates.get('python', {}).get('integration_test', '')
+        template = self.test_templates.get("python", {}).get("integration_test", "")
         return template.format(
             module_path=f"src.services.{service['name']}",
-            service_class=service['name'].title().replace('_', ''),
+            service_class=service["name"].title().replace("_", ""),
             service_fixture=f"{service['name']}_service",
             operation="execute",
             operation_args="test_payload",
             integration_arrange="test_payload = {'action': 'test'}",
-            integration_assert="assert result['success'] is True"
+            integration_assert="assert result['success'] is True",
         )
-    
-    def _generate_api_test_code(self, endpoint: Dict[str, Any], framework: TestFramework) -> str:
+
+    def _generate_api_test_code(
+        self, endpoint: Dict[str, Any], framework: TestFramework
+    ) -> str:
         """Generate API test code for an endpoint"""
-        template = self.test_templates.get('python', {}).get('api_test', '')
+        template = self.test_templates.get("python", {}).get("api_test", "")
         return template.format(
             app_module="src.main",
-            api_name=endpoint['name'].title(),
-            endpoint=endpoint['name'],
-            endpoint_path=endpoint['path'],
+            api_name=endpoint["name"].title(),
+            endpoint=endpoint["name"],
+            endpoint_path=endpoint["path"],
             response_assertions="assert 'data' in data\nassert isinstance(data['data'], list)",
             test_payload="{'name': 'Test User', 'email': 'test@example.com'}",
             post_assertions="assert response.json()['id'] is not None",
-            invalid_payload="{}"
+            invalid_payload="{}",
         )
-    
-    def _generate_performance_test_code(self, component: Dict[str, Any], framework: TestFramework) -> str:
+
+    def _generate_performance_test_code(
+        self, component: Dict[str, Any], framework: TestFramework
+    ) -> str:
         """Generate performance test code"""
         return f'''
 import pytest
@@ -543,8 +569,10 @@ class Test{component['name'].title()}Performance:
         
         assert avg_time < 0.1  # Average under 100ms
 '''
-    
-    def _generate_security_test_code(self, concern: Dict[str, Any], framework: TestFramework) -> str:
+
+    def _generate_security_test_code(
+        self, concern: Dict[str, Any], framework: TestFramework
+    ) -> str:
         """Generate security test code"""
         return f'''
 import pytest
@@ -583,8 +611,10 @@ class Test{concern['name'].title()}Security:
         assert result['authorized'] is False
         assert result['status_code'] == 403
 '''
-    
-    def _generate_setup_code(self, project_profile: Dict[str, Any], framework: TestFramework) -> str:
+
+    def _generate_setup_code(
+        self, project_profile: Dict[str, Any], framework: TestFramework
+    ) -> str:
         """Generate test setup code"""
         return '''
 # Test setup and configuration
@@ -612,8 +642,10 @@ def test_db():
     yield
     # Database cleanup logic here
 '''
-    
-    def _generate_teardown_code(self, project_profile: Dict[str, Any], framework: TestFramework) -> str:
+
+    def _generate_teardown_code(
+        self, project_profile: Dict[str, Any], framework: TestFramework
+    ) -> str:
         """Generate test teardown code"""
         return '''
 # Test cleanup and teardown
@@ -632,65 +664,67 @@ def cleanup_test_database():
     if test_db.exists():
         test_db.unlink()
 '''
-    
-    def _generate_fixtures(self, project_profile: Dict[str, Any], framework: TestFramework) -> Dict[str, str]:
+
+    def _generate_fixtures(
+        self, project_profile: Dict[str, Any], framework: TestFramework
+    ) -> Dict[str, str]:
         """Generate test fixtures"""
         return {
-            'sample_user': '''
+            "sample_user": """
 {
     "id": 1,
     "username": "testuser",
     "email": "test@example.com",
     "created_at": "2023-01-01T00:00:00Z"
 }
-''',
-            'sample_api_response': '''
+""",
+            "sample_api_response": """
 {
     "status": "success",
     "data": [],
     "message": "Operation completed successfully"
 }
-'''
+""",
         }
-    
+
     # Generate assertion helpers
     def _generate_unit_assertions(self, module: Dict[str, Any]) -> List[str]:
         """Generate unit test assertions"""
         return [
             "assert result is not None",
             "assert isinstance(result, dict)",
-            "assert result['status'] == 'success'"
+            "assert result['status'] == 'success'",
         ]
-    
+
     def _generate_integration_assertions(self, service: Dict[str, Any]) -> List[str]:
         """Generate integration test assertions"""
         return [
             "assert response.status_code == 200",
             "assert result['success'] is True",
-            "assert 'data' in result"
+            "assert 'data' in result",
         ]
-    
+
     def _generate_api_assertions(self, endpoint: Dict[str, Any]) -> List[str]:
         """Generate API test assertions"""
         return [
             "assert response.status_code in [200, 201]",
             "assert response.headers['content-type'] == 'application/json'",
-            "assert 'data' in response.json()"
+            "assert 'data' in response.json()",
         ]
-    
+
     def _generate_performance_assertions(self, component: Dict[str, Any]) -> List[str]:
         """Generate performance test assertions"""
-        sla = component.get('sla', '100ms')
+        sla = component.get("sla", "100ms")
         return [
             f"assert response_time < {sla}",
             "assert cpu_usage < 80",
-            "assert memory_usage < 500  # MB"
+            "assert memory_usage < 500  # MB",
         ]
-    
+
     def _generate_security_assertions(self, concern: Dict[str, Any]) -> List[str]:
         """Generate security test assertions"""
         return [
             "assert result['secure'] is True",
             "assert 'vulnerability' not in result",
-            "assert result['status_code'] != 500"
+            "assert result['status_code'] != 500",
         ]
