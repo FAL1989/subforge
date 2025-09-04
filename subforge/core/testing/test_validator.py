@@ -229,7 +229,7 @@ class TestValidator:
                     )
 
                 # Check for descriptive names
-                if len(node.name) < 10:
+                if len(node.name) <= 10:
                     issues.append(
                         ValidationIssue(
                             severity=ValidationSeverity.WARNING,

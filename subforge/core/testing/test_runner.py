@@ -95,11 +95,11 @@ class TestRunner:
         # Execute tests
         start_time = time.time()
 
-        if config.framework == TestFramework.PYTEST:
+        if config.framework.value == "pytest":
             result = await self._run_pytest(test_suite, config)
-        elif config.framework == TestFramework.JEST:
+        elif config.framework.value == "jest":
             result = await self._run_jest(test_suite, config)
-        elif config.framework == TestFramework.UNITTEST:
+        elif config.framework.value == "unittest":
             result = await self._run_unittest(test_suite, config)
         else:
             raise ValueError(f"Unsupported test framework: {config.framework}")
@@ -129,12 +129,12 @@ class TestRunner:
         (test_dir / "security").mkdir(exist_ok=True)
 
         # Write setup and teardown files
-        if test_suite.setup_code:
-            setup_file = (
-                test_dir / "conftest.py"
-                if config.framework == TestFramework.PYTEST
-                else test_dir / "setup.py"
-            )
+        if config.framework.value == "pytest":
+            setup_file = test_dir / "conftest.py"
+            setup_content = test_suite.setup_code or "# Pytest configuration and fixtures\n"
+            setup_file.write_text(setup_content)
+        elif config.framework.value == "unittest" and test_suite.setup_code:
+            setup_file = test_dir / "setup.py" 
             setup_file.write_text(test_suite.setup_code)
 
         # Write fixtures
@@ -178,26 +178,32 @@ class TestRunner:
 
         base_imports = []
 
-        if test_case.framework == TestFramework.PYTEST:
+        # Always include base framework imports
+        if test_case.framework.value == "pytest":
             base_imports.extend(
                 ["import pytest", "from unittest.mock import Mock, patch, MagicMock"]
             )
-        elif test_case.framework == TestFramework.UNITTEST:
+        elif test_case.framework.value == "unittest":
             base_imports.extend(
                 ["import unittest", "from unittest.mock import Mock, patch, MagicMock"]
             )
 
         # Add test-type specific imports
-        if test_case.test_type.value == "api":
+        if hasattr(test_case.test_type, 'value'):
+            test_type_value = test_case.test_type.value
+        else:
+            test_type_value = str(test_case.test_type).lower()
+        
+        if test_type_value == "api":
             if "fastapi" in test_case.dependencies:
                 base_imports.append("from fastapi.testclient import TestClient")
             if "httpx" in test_case.dependencies:
                 base_imports.append("import httpx")
 
-        if test_case.test_type.value == "performance":
+        if test_type_value == "performance":
             base_imports.extend(["import time", "import psutil"])
 
-        if test_case.test_type.value == "security":
+        if test_type_value == "security":
             base_imports.extend(["import hashlib", "import secrets"])
 
         return "\n".join(base_imports)
@@ -214,11 +220,11 @@ class TestRunner:
             all_dependencies.update(test_case.dependencies)
 
         # Add framework-specific dependencies
-        if config.framework == TestFramework.PYTEST:
+        if config.framework.value == "pytest":
             all_dependencies.update(["pytest", "pytest-asyncio", "pytest-mock"])
             if config.coverage:
                 all_dependencies.add("pytest-cov")
-        elif config.framework == TestFramework.JEST:
+        elif config.framework.value == "jest":
             all_dependencies.update(["jest", "@types/jest"])
 
         # Install dependencies

@@ -23,7 +23,8 @@ from subforge.core.testing.test_generator import (
     TestGenerator, TestType, TestFramework, TestCase, TestSuite
 )
 from subforge.core.testing.test_runner import (
-    TestRunner, TestRunConfiguration, TestResult, TestSuiteResult, TestRunStatus
+    TestRunner, TestRunConfiguration, TestResult, TestSuiteResult, TestRunStatus,
+    TestFramework as RunnerTestFramework
 )
 from subforge.core.testing.test_validator import (
     TestValidator, ValidationLevel, ValidationSeverity, ValidationIssue, ValidationResult
@@ -426,7 +427,7 @@ class TestTestRunner:
     def test_config(self):
         """Create test configuration"""
         return TestRunConfiguration(
-            framework=TestFramework.PYTEST,
+            framework=RunnerTestFramework.PYTEST,
             test_paths=["tests/"],
             parallel=True,
             coverage=True,
@@ -466,7 +467,7 @@ class TestTestRunner:
     @pytest.mark.asyncio
     async def test_run_test_suite_jest(self, test_runner, sample_test_suite):
         """Test running test suite with Jest"""
-        config = TestRunConfiguration(framework=TestFramework.JEST, test_paths=["tests/"])
+        config = TestRunConfiguration(framework=RunnerTestFramework.JEST, test_paths=["tests/"])
         expected_result = TestSuiteResult("test", 1, 1, 0, 0, 0, 1.0)
         
         # Test Jest-specific components
@@ -479,7 +480,7 @@ class TestTestRunner:
     @pytest.mark.asyncio
     async def test_run_test_suite_unittest(self, test_runner, sample_test_suite):
         """Test running test suite with unittest"""
-        config = TestRunConfiguration(framework=TestFramework.UNITTEST, test_paths=["tests/"])
+        config = TestRunConfiguration(framework=RunnerTestFramework.UNITTEST, test_paths=["tests/"])
         
         # Test unittest-specific components
         with patch.object(test_runner, '_run_unittest', new_callable=AsyncMock) as mock_run:
@@ -491,7 +492,7 @@ class TestTestRunner:
     @pytest.mark.asyncio
     async def test_run_test_suite_unsupported_framework(self, test_runner, sample_test_suite):
         """Test error handling for unsupported framework"""
-        config = TestRunConfiguration(framework=TestFramework.MOCHA, test_paths=["tests/"])
+        config = TestRunConfiguration(framework=RunnerTestFramework.MOCHA, test_paths=["tests/"])
         
         # This should raise ValueError for unsupported framework
         with pytest.raises(ValueError, match="Unsupported test framework"):
@@ -531,7 +532,7 @@ class TestTestRunner:
     @pytest.mark.asyncio
     async def test_prepare_test_environment_unittest(self, test_runner, sample_test_suite):
         """Test environment preparation for unittest framework"""
-        config = TestRunConfiguration(framework=TestFramework.UNITTEST, test_paths=["tests/"])
+        config = TestRunConfiguration(framework=RunnerTestFramework.UNITTEST, test_paths=["tests/"])
         sample_test_suite.setup_code = "# unittest setup"
         
         with patch.object(test_runner, '_install_test_dependencies', new_callable=AsyncMock):
@@ -643,7 +644,7 @@ class TestTestRunner:
     @pytest.mark.asyncio
     async def test_install_test_dependencies_jest(self, test_runner, sample_test_suite):
         """Test dependency installation for Jest"""
-        config = TestRunConfiguration(framework=TestFramework.JEST, test_paths=["tests/"])
+        config = TestRunConfiguration(framework=RunnerTestFramework.JEST, test_paths=["tests/"])
         
         with patch('asyncio.create_subprocess_exec') as mock_subprocess:
             mock_process = AsyncMock()
@@ -696,7 +697,7 @@ class TestTestRunner:
     async def test_run_pytest_with_options(self, test_runner, sample_test_suite):
         """Test pytest execution with various options"""
         config = TestRunConfiguration(
-            framework=TestFramework.PYTEST,
+            framework=RunnerTestFramework.PYTEST,
             test_paths=["custom/path"],
             verbose=True,
             coverage=True,
@@ -725,7 +726,7 @@ class TestTestRunner:
     @pytest.mark.asyncio
     async def test_run_jest(self, test_runner, sample_test_suite):
         """Test Jest execution"""
-        config = TestRunConfiguration(framework=TestFramework.JEST, test_paths=["tests/"])
+        config = TestRunConfiguration(framework=RunnerTestFramework.JEST, test_paths=["tests/"])
         
         with patch('asyncio.create_subprocess_exec') as mock_subprocess, \
              patch('asyncio.wait_for') as mock_wait:
@@ -747,7 +748,7 @@ class TestTestRunner:
     @pytest.mark.asyncio
     async def test_run_unittest(self, test_runner, sample_test_suite):
         """Test unittest execution"""
-        config = TestRunConfiguration(framework=TestFramework.UNITTEST, test_paths=["tests/"])
+        config = TestRunConfiguration(framework=RunnerTestFramework.UNITTEST, test_paths=["tests/"])
         
         with patch('asyncio.create_subprocess_exec') as mock_subprocess, \
              patch('asyncio.wait_for') as mock_wait:
@@ -1808,7 +1809,7 @@ class TestTestingSystemIntegration:
         # Step 3: Run tests (mocked)
         runner = TestRunner(temp_dir)
         config = TestRunConfiguration(
-            framework=TestFramework.PYTEST,
+            framework=RunnerTestFramework.PYTEST,
             test_paths=["tests/"],
             coverage=True
         )
