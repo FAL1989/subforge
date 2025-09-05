@@ -1,0 +1,226 @@
+# SubForge Authentication Configuration
+# Security settings for agent communication and authorization
+
+authentication:
+  # Enable/disable authentication system
+  enabled: true
+  
+  # Secret key for token signing (use environment variable in production)
+  # secret_key: ${AUTH_SECRET_KEY}
+  
+  # Token configuration
+  tokens:
+    # Default token lifetime in hours
+    default_lifetime_hours: 24
+    
+    # Refresh token lifetime in days
+    refresh_lifetime_days: 7
+    
+    # Maximum tokens per agent
+    max_per_agent: 5
+    
+    # Token cleanup interval in hours
+    cleanup_interval_hours: 6
+  
+  # Security settings
+  security:
+    # Failed authentication attempts before lockout
+    max_failed_attempts: 5
+    
+    # Account lockout duration in minutes
+    lockout_duration_minutes: 15
+    
+    # Enable rate limiting
+    rate_limiting: true
+    
+    # Requests per minute per agent
+    rate_limit_rpm: 60
+    
+    # Enable audit logging
+    audit_logging: true
+    
+    # Audit log retention days
+    audit_retention_days: 90
+
+# Role definitions with permissions
+roles:
+  admin:
+    description: "Full system access"
+    permissions:
+      - READ
+      - WRITE
+      - EXECUTE
+      - ADMIN
+      - CREATE_HANDOFF
+      - READ_HANDOFF
+      - DELETE_HANDOFF
+      - MODIFY_CONFIG
+      - VIEW_LOGS
+      - MANAGE_TOKENS
+  
+  orchestrator:
+    description: "Workflow coordination and management"
+    permissions:
+      - READ
+      - WRITE
+      - EXECUTE
+      - CREATE_HANDOFF
+      - READ_HANDOFF
+      - DELETE_HANDOFF
+      - VIEW_LOGS
+  
+  specialist:
+    description: "Domain-specific task execution"
+    permissions:
+      - READ
+      - WRITE
+      - EXECUTE
+      - CREATE_HANDOFF
+      - READ_HANDOFF
+  
+  reviewer:
+    description: "Code review and quality assurance"
+    permissions:
+      - READ
+      - READ_HANDOFF
+      - VIEW_LOGS
+  
+  observer:
+    description: "Read-only monitoring access"
+    permissions:
+      - READ
+      - VIEW_LOGS
+  
+  guest:
+    description: "Minimal guest access"
+    permissions:
+      - READ
+
+# Agent-specific configurations
+agents:
+  # System agent (internal operations)
+  SYSTEM:
+    role: admin
+    auto_create: true
+    token_lifetime_hours: 0  # Never expires
+  
+  # Orchestrator agents
+  orchestrator_*:
+    role: orchestrator
+    token_lifetime_hours: 48
+    refresh_enabled: true
+  
+  # Specialist agents
+  frontend_*:
+    role: specialist
+    token_lifetime_hours: 24
+    custom_permissions:
+      - UI_MODIFY
+  
+  backend_*:
+    role: specialist
+    token_lifetime_hours: 24
+    custom_permissions:
+      - DATABASE_ACCESS
+  
+  # Review agents
+  reviewer_*:
+    role: reviewer
+    token_lifetime_hours: 12
+  
+  # Test agents
+  test_*:
+    role: specialist
+    token_lifetime_hours: 6
+    custom_permissions:
+      - TEST_EXECUTE
+
+# Communication settings
+communication:
+  # Require authentication for all operations
+  require_auth: true
+  
+  # Allow fallback to system token for backward compatibility
+  allow_system_fallback: true
+  
+  # Handoff permissions
+  handoffs:
+    # Who can create handoffs
+    create_requires: CREATE_HANDOFF
+    
+    # Who can read handoffs
+    read_requires: READ_HANDOFF
+    
+    # Who can delete handoffs
+    delete_requires: DELETE_HANDOFF
+    
+    # Encrypt sensitive handoff data
+    encrypt_data: true
+
+# Audit configuration
+audit:
+  # Events to log
+  log_events:
+    - TOKEN_CREATED
+    - TOKEN_REVOKED
+    - TOKEN_REFRESHED
+    - AUTH_SUCCESS
+    - AUTH_FAILURE
+    - PERMISSION_CHANGE
+    - HANDOFF_CREATED
+    - HANDOFF_ACCESSED
+    - SUSPICIOUS_ACTIVITY
+    - LOCKOUT_TRIGGERED
+  
+  # Log format
+  format: json  # Options: json, text
+  
+  # Log rotation
+  rotation:
+    max_size_mb: 100
+    backup_count: 10
+    compress: true
+
+# Integration settings
+integrations:
+  # OAuth2 provider configuration (future enhancement)
+  oauth2:
+    enabled: false
+    providers: []
+  
+  # LDAP/AD integration (future enhancement)
+  ldap:
+    enabled: false
+    server: ""
+  
+  # API key authentication (alternative to tokens)
+  api_keys:
+    enabled: false
+    header_name: "X-API-Key"
+
+# Environment-specific overrides
+environments:
+  development:
+    authentication:
+      enabled: true
+      tokens:
+        default_lifetime_hours: 168  # 1 week for dev
+    security:
+      rate_limiting: false
+  
+  staging:
+    authentication:
+      enabled: true
+    security:
+      rate_limiting: true
+      rate_limit_rpm: 120
+  
+  production:
+    authentication:
+      enabled: true
+    security:
+      rate_limiting: true
+      rate_limit_rpm: 60
+      max_failed_attempts: 3
+    audit:
+      log_events: all
