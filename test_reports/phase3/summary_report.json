@@ -1,0 +1,40 @@
+{
+  "phase": "Phase 3 Refactoring Validation",
+  "timestamp": "2025-09-04T21:36:37.743237",
+  "duration": "4.92 seconds",
+  "workspace": "/home/nando/projects/Claude-subagents",
+  "results": {
+    "integration": {
+      "status": "failed",
+      "tests_run": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 0
+    },
+    "performance": {
+      "status": "unknown",
+      "tests_run": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 0
+    },
+    "architecture": {
+      "status": "unknown",
+      "tests_run": 0,
+      "passed": 0,
+      "failed": 0,
+      "skipped": 0,
+      "warnings": 0
+    },
+    "coverage": {
+      "status": "completed",
+      "percent_covered": 25.281899109792285,
+      "covered_lines": 779,
+      "total_lines": 2576,
+      "missing_lines": 1797
+    }
+  },
+  "overall_status": "FAILED"
+}
