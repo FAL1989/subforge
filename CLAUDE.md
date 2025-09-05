@@ -1,130 +1,87 @@
 # Claude-subagents - Claude Code Agent Configuration
 
-## Project Status: ✅ **COMPLETED SUCCESSFULLY**
-
-### 🏆 Dashboard Implementation Results (september 2025)
-- **Files Created**: 321 files (excluding node_modules)
-- **Technologies Integrated**: FastAPI, Next.js 14, TypeScript, WebSocket, Redis, ML Analytics, Docker, Kubernetes
-- **Implementation Time**: Single session, zero iterations required
-- **Error Rate**: **0%** - Perfect one-shot implementation
-- **Dashboard URL**: http://localhost:3001 (fully functional)
-- **Backend API**: http://localhost:8000/docs
-- **Commits**: 7 well-organized semantic commits
-
-### 🚀 Unprecedented Achievement
-- **First-ever "one-shot perfect" enterprise dashboard**
-- **7 specialized agents working in perfect coordination**
-- **Zero debugging or correction cycles required**
-- **~70% token efficiency improvement**
-- **Production-ready on first execution**
+## Project Overview
+Create comprehensive agent team for SubForge development with all recommended specialists
 
 ## Technology Stack
-**Languages**: javascript, typescript, python, markdown, json
-**Frameworks**: fastapi, react, nextjs, redis, docker, kubernetes
-**Testing**: pytest, jest, playwright, react-testing-library
-**Analytics**: pandas, numpy, scikit-learn, recharts
+**Languages**: typescript, javascript, shell, json, markdown, python, sql, yaml, css, html
+**Frameworks**: redis, react, nextjs, postgresql, fastapi
 
-## Architecture Pattern: Jamstack + Microservices
-Production-ready with real-time updates, ML analytics, and comprehensive testing.
+## Architecture Pattern: Jamstack
+Prioritize static generation and API integration. Optimize build times.
 
 ## Available Specialist Agents
 
-**@frontend-developer** ✅
-- **Domain**: User interfaces, client-side state, responsive design
-- **Achievement**: Created complete Next.js 14 dashboard with Tailwind CSS
+**@api-developer**
+- **Domain**: Specialized development tasks
 
-**@backend-developer** ✅
+**@backend-developer**
 - **Domain**: Server-side logic, APIs, databases, external integrations
-- **Achievement**: Built FastAPI backend with SQLAlchemy and async support
 
-**@data-scientist** ✅
-- **Domain**: ML models, analytics, data processing
-- **Achievement**: Implemented predictive analytics and reporting engine
+**@security-auditor**
+- **Domain**: Specialized development tasks
 
-**@api-developer** ✅
-- **Domain**: API design, WebSocket, real-time features
-- **Achievement**: Enhanced API v2 with room-based WebSocket messaging
-
-**@devops-engineer** ✅
-- **Domain**: Deployment, monitoring, containerization, CI/CD pipelines
-- **Achievement**: Complete Docker, Kubernetes, and GitHub Actions setup
-
-**@code-reviewer** ✅
+**@code-reviewer**
 - **Domain**: Code quality, standards compliance, architectural alignment
-- **Achievement**: Validated entire implementation with Grade B+ assessment
 
-**@test-engineer** ✅
+**@frontend-developer**
+- **Domain**: User interfaces, client-side state, responsive design
+
+**@test-engineer**
 - **Domain**: Testing strategies, test automation, quality assurance
-- **Achievement**: 80%+ test coverage with unit, integration, and E2E tests
+
+**@performance-optimizer**
+- **Domain**: Specialized development tasks
+
+**@documentation-specialist**
+- **Domain**: Specialized development tasks
+
+**@data-scientist**
+- **Domain**: Specialized development tasks
+
+**@orchestrator**
+- **Domain**: Specialized development tasks
 
 ## Agent Coordination Protocol
 
-### ✅ Proven Coordination Success
-All agents executed in perfect sequence:
-1. Backend infrastructure (FastAPI core)
-2. WebSocket and API enhancements
-3. Frontend dashboard UI
-4. Analytics and ML integration
-5. Comprehensive test suite
-6. Deployment configuration
-7. Code review and validation
+### Auto-Activation Rules
+Agents will be automatically activated based on:
+- **File Types**: Each agent monitors specific file extensions
+- **Keywords**: Contextual keywords in your requests
+- **Directories**: Working in specific project directories
 
-### Quality Standards Achieved
-**All code successfully passed:**
-- ✅ Syntax validation - Zero errors
-- ✅ Type checking - Full TypeScript/Python typing
-- ✅ Unit tests - Comprehensive coverage
-- ✅ Code review - B+ grade with actionable improvements
+### Quality Standards
+**All code must pass:**
+- [ ] Syntax validation
+- [ ] Type checking (if applicable)
+- [ ] Unit tests (when modifying existing code)
+- [ ] Code review by @code-reviewer
 
-## Project Metrics (Final)
-- **Complexity**: High (Enterprise-grade)
-- **Files**: 321 (source files)
-- **Lines of Code**: ~40,000+
-- **Technologies**: 15+ integrated systems
-- **Team Size**: 7 specialized agents
-- **Success Rate**: 100%
+## Project Metrics
+- **Complexity**: Enterprise
+- **Files**: 1,292
+- **Lines of Code**: 257,891
+- **Team Size Estimate**: 8
 
-## Development Workflow - Validated
+## Development Workflow
 
-### 1. **Feature Development** ✅
-   - Requirements analyzed perfectly
-   - Design implemented flawlessly
-   - Code with tests created
-   - Review and validation completed
+1. **Feature Development**
+   - Analyze requirements
+   - Design implementation
+   - Write code with tests
+   - Review and validate
 
-### 2. **Integration** ✅
-   - All components integrated seamlessly
-   - Real-time WebSocket working
-   - Database migrations ready
-   - API documentation complete
+2. **Bug Fixes**
+   - Reproduce issue
+   - Identify root cause
+   - Implement fix
+   - Add regression tests
 
-### 3. **Production Readiness** ✅
-   - Docker containers configured
-   - Kubernetes manifests ready
-   - CI/CD pipeline established
-   - Monitoring and logging setup
-
-## Key Success Factors
-
-### Context Engineering Excellence
-- Precise agent specialization
-- Clear domain boundaries
-- Optimal execution sequence
-- Comprehensive context templates
-
-### Technology Decisions
-- Modern stack (Next.js 14, FastAPI)
-- Production-grade architecture
-- Scalable design patterns
-- Security-first approach
-
-### Execution Perfection
-- Zero manual interventions
-- No debugging required
-- First-try success
-- Efficient token usage
+3. **Code Reviews**
+   - @code-reviewer automatically activated for validation
+   - Checks for best practices and patterns
+   - Ensures architectural compliance
 
 ---
 *Generated by SubForge v1.0 - Intelligent Claude Code Configuration*
-*Dashboard completed: 2025-08-29*
-*Achievement: First one-shot perfect enterprise dashboard in history*
+*Project analyzed: 2025-09-04 20:06*
