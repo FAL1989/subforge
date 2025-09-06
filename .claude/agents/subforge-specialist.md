@@ -1,8 +1,51 @@
 ---
 name: subforge-specialist
-tools: Read, Write, Edit
+description: Core SubForge knowledge extraction and context building specialist. Expert in Python project analysis, documentation extraction, gap analysis, and Claude Code context generation. Manages the main SubForge engine.
 model: sonnet
-context: subforge/
+tools:
+  - Read
+  - Write
+  - Edit
+  - MultiEdit
+  - Bash
+  - Grep
+  - Glob
+  - TodoWrite
+  - WebFetch
+  - WebSearch
+  - mcp__github__create_repository
+  - mcp__github__get_file_contents
+  - mcp__github__push_files
+  - mcp__github__create_pull_request
+  - mcp__github__create_branch
+  - mcp__github__list_commits
+  - mcp__github__create_issue
+  - mcp__github__list_issues
+  - mcp__github__update_issue
+  - mcp__github__merge_pull_request
+  - mcp__github__fork_repository
+  - mcp__github__search_code
+  - mcp__github__search_issues
+  - mcp__github__search_users
+  - mcp__github__get_issue
+  - mcp__github__get_pull_request
+  - mcp__github__list_pull_requests
+  - mcp__github__create_pull_request_review
+  - mcp__github__get_pull_request_files
+  - mcp__github__get_pull_request_status
+  - mcp__github__update_pull_request_branch
+  - mcp__github__get_pull_request_comments
+  - mcp__github__get_pull_request_reviews
+  - mcp__github__add_issue_comment
+  - mcp__github__create_or_update_file
+  - mcp__context7__resolve-library-id
+  - mcp__context7__get-library-docs
+  - mcp__Ref__ref_search_documentation
+  - mcp__Ref__ref_read_url
+  - mcp__mcp-server-firecrawl__firecrawl_scrape
+  - mcp__mcp-server-firecrawl__firecrawl_map
+  - mcp__mcp-server-firecrawl__firecrawl_crawl
+  - mcp__perplexity__perplexity_ask
 ---
 
 You are a specialist for the subforge module in the subforge project.

@@ -12,14 +12,12 @@ from pathlib import Path
 # Import SubForge core modules
 try:
     from .core.project_analyzer import ProjectAnalyzer
-    from .core.workflow_orchestrator import WorkflowOrchestrator
     from .monitoring.metrics_collector import MetricsCollector
     from .orchestration.parallel_executor import ParallelExecutor
 except ImportError:
     # Handle running from different directories
     sys.path.append(str(Path(__file__).parent))
     from core.project_analyzer import ProjectAnalyzer
-    from core.workflow_orchestrator import WorkflowOrchestrator
 
     try:
         from monitoring.metrics_collector import MetricsCollector
@@ -54,7 +52,9 @@ def print_section(title: str, style: str = "="):
 
 
 async def cmd_init(args):
-    """Initialize SubForge for a project"""
+    """Initialize SubForge for a project using knowledge extraction"""
+    from .simple_init import init_subforge
+    
     project_path = Path(args.project_path) if args.project_path else Path.cwd()
 
     if not project_path.exists():
@@ -65,37 +65,44 @@ async def cmd_init(args):
     print(f"🚀 Initializing SubForge for: {project_path.name}")
     print(f"   Path: {project_path}")
 
-    user_request = args.request or "Set up development environment with best practices"
+    user_request = args.request or "Set up comprehensive development environment"
 
     if args.dry_run:
         print("\n⚠️  DRY RUN MODE - No changes will be made")
-
-        # Just run analysis
-        print("\n🔍 Analyzing project...")
-        analyzer = ProjectAnalyzer()
-        profile = await analyzer.analyze_project(str(project_path))
-
-        display_analysis_results(profile)
-        display_recommended_setup(profile)
+        # Run analysis without writing files
+        result = init_subforge(
+            str(project_path),
+            verbose=args.verbose
+        )
+        if result and 'errors' not in result:
+            print("\n✅ Dry run completed successfully")
         return 0
 
-    # Run full workflow
+    # Run full initialization
     print(f"\n📝 Request: {user_request}")
-    print("\n🔄 Executing SubForge workflow...")
-
-    try:
-        orchestrator = WorkflowOrchestrator()
-        context = await orchestrator.execute_workflow(user_request, str(project_path))
-
-        display_workflow_results(context)
+    result = init_subforge(
+        str(project_path),
+        verbose=args.verbose
+    )
+    
+    if result and 'errors' not in result:
+        print("\n✅ SubForge initialization completed successfully!")
+        print("\n📁 Created files:")
+        print("  - CLAUDE.md (root context)")
+        print("  - .claude/")
+        if 'summary' in result and 'agents_created' in result['summary']:
+            print(f"    - agents/ ({result['summary']['agents_created']} agents)")
+        if 'summary' in result and 'commands_created' in result['summary']:
+            print(f"    - commands/ ({result['summary']['commands_created']} commands)")
+        if 'summary' in result and 'workflows_created' in result['summary']:
+            print(f"    - workflows/ ({result['summary']['workflows_created']} workflows)")
+        print("\n🎉 Your Claude Code agents are ready!")
         return 0
-
-    except Exception as e:
-        print(f"\n❌ Workflow failed: {e}")
-        if args.verbose:
-            import traceback
-
-            traceback.print_exc()
+    else:
+        print("\n❌ Initialization failed")
+        if result and 'errors' in result:
+            for error in result['errors']:
+                print(f"  - {error}")
         return 1
 
 

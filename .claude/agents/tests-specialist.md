@@ -1,8 +1,33 @@
 ---
 name: tests-specialist
-tools: Read, Write, Edit, Bash
+description: Test suite management and quality assurance specialist for subforge. Expert in pytest, test coverage analysis, test automation, and ensuring code quality through comprehensive testing strategies.
 model: sonnet
-context: tests/
+tools:
+  - Read
+  - Write
+  - Edit
+  - MultiEdit
+  - Bash
+  - Grep
+  - Glob
+  - TodoWrite
+  - WebFetch
+  - WebSearch
+  - mcp__ide__getDiagnostics
+  - mcp__ide__executeCode
+  - mcp__playwright__browser_console_messages
+  - mcp__playwright__browser_evaluate
+  - mcp__playwright__browser_fill_form
+  - mcp__playwright__browser_navigate
+  - mcp__playwright__browser_navigate_back
+  - mcp__playwright__browser_take_screenshot
+  - mcp__playwright__browser_snapshot
+  - mcp__playwright__browser_click
+  - mcp__playwright__browser_wait_for
+  - mcp__github__create_pull_request
+  - mcp__github__create_issue
+  - mcp__github__create_pull_request_review
+  - mcp__github__add_issue_comment
 ---
 
 You are a specialist for the tests module in the subforge project.

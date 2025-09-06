@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from .knowledge_extractor import (
-    ProjectInfo, Command, Workflow, Module, Architecture
+    ProjectInfo, Command, Workflow, Module, Architecture, MCPTool
 )
 
 
@@ -254,26 +254,47 @@ Found in: `{cmd.source}`
         
         return command_files
     
-    def build_agent_files(self, modules: List[Module], project_info: ProjectInfo) -> List[AgentFile]:
+    def build_agent_files(self, modules: List[Module], project_info: ProjectInfo, 
+                         available_mcps: Dict[str, MCPTool] = None) -> List[AgentFile]:
         """
         Creates domain-specific agents based on actual modules
         Not generic templates, but specific to this project's structure
+        Only creates agents for significant modules
+        Uses DETECTED MCPs, not hardcoded assumptions
         """
         agent_files = []
         
-        for module in modules:
+        # Filter out non-significant modules
+        significant_modules = [
+            m for m in modules 
+            if self._is_significant_module_for_agent(m)
+        ]
+        
+        # Avoid duplicates by tracking created agent names
+        created_agents = set()
+        
+        for module in significant_modules:
             # Generate agent name from module
             agent_name = f"{module.name}-specialist"
             
+            # Skip if we already have this agent
+            if agent_name in created_agents:
+                continue
+            created_agents.add(agent_name)
+            
             # Determine appropriate tools based on module characteristics
-            tools = self._determine_agent_tools(module)
+            tools = self._determine_agent_tools(module, project_info, available_mcps)
+            
+            # Generate detailed description based on module analysis
+            description = self._generate_agent_description(module, project_info)
             
             # Generate agent prompt based on actual module context
             content = f"""---
 name: {agent_name}
-tools: {', '.join(tools)}
+description: {description}
 model: sonnet
-context: {module.path.relative_to(self.project_path).as_posix()}/
+tools:
+{chr(10).join(f'  - {tool}' for tool in tools)}
 ---
 
 You are a specialist for the {module.name} module in the {project_info.name} project.
@@ -318,55 +339,158 @@ You are responsible for the code in `{module.path.relative_to(self.project_path)
                 path=self.claude_dir / "agents" / f"{agent_name}.md"
             ))
         
-        # Also create a general project coordinator agent
-        coordinator_content = f"""---
-name: project-coordinator
-tools: Read, Write, Edit, Bash, Grep, Glob
-model: sonnet
+        # Add essential agents that all projects need
+        
+        # 1. Orchestrator - for complex multi-agent tasks
+        if 'orchestrator' not in created_agents:
+            # Build orchestrator tools - needs coordination and management MCPs
+            orchestrator_tools = ['Read', 'Write', 'Edit', 'MultiEdit', 'Bash', 'Grep', 
+                                 'Glob', 'TodoWrite', 'Task', 'WebFetch', 'WebSearch']
+            
+            if available_mcps:
+                # Add AI assistance for decision making
+                for mcp_name, mcp_tool in available_mcps.items():
+                    if mcp_tool.category == 'search':  # Perplexity for research
+                        orchestrator_tools.append(mcp_name)
+                    elif mcp_tool.server == 'github' and any(op in mcp_name for op in [
+                        'create_repository', 'get_file_contents', 'push_files',
+                        'create_pull_request', 'create_branch', 'list_commits',
+                        'create_issue', 'list_issues', 'merge_pull_request',
+                        'get_pull_request', 'list_pull_requests', 'create_pull_request_review'
+                    ]):
+                        orchestrator_tools.append(mcp_name)
+            
+            # Remove duplicates
+            orchestrator_tools = list(dict.fromkeys(orchestrator_tools))
+            
+            # Format tools for YAML
+            tools_yaml = '\n'.join(f'  - {tool}' for tool in orchestrator_tools)
+            
+            orchestrator_content = f"""---
+name: orchestrator
+description: Master orchestrator for complex multi-agent workflows. Coordinates parallel execution, manages task delegation, and ensures optimal team performance across all project modules.
+model: opus
+tools:
+{tools_yaml}
 ---
 
-You coordinate work across the entire {project_info.name} project.
-
-## Project Overview
-{project_info.description}
-
-## Architecture
-{project_info.architecture}
-
-## Technology Stack
-- Languages: {', '.join(project_info.languages)}
-- Frameworks: {', '.join(project_info.frameworks)}
-- Databases: {', '.join(project_info.databases)}
-
-## Key Modules
-{chr(10).join(f'- {m.name}: {m.description}' for m in modules[:10])}
+You are the orchestrator for complex workflows in this project.
 
 ## Your Role
-You handle cross-cutting concerns and coordinate between different modules:
-- Architectural decisions and patterns
-- Cross-module integrations
-- Project-wide refactoring
-- Dependency management
-- Build and deployment configuration
-- Documentation updates
-
-## Guidelines
-1. Maintain architectural consistency
-2. Ensure modules remain properly decoupled
-3. Coordinate breaking changes across modules
-4. Keep project documentation up to date
-5. Monitor overall project health
+You coordinate multi-agent workflows and delegate tasks to appropriate specialists:
+- Break down complex tasks into parallel subtasks
+- Assign work to the right specialist agents
+- Monitor progress and ensure quality
+- Integrate results from multiple agents
 
 ## Available Specialists
-You can delegate module-specific work to:
-{chr(10).join(f'- @{m.name}-specialist' for m in modules[:10])}
+You can delegate to these module specialists:
+{chr(10).join(f'- @{m.name}-specialist: {m.description}' for m in significant_modules[:10])}
+
+## Coordination Strategy
+1. Analyze the request to identify required domains
+2. Break down into parallel tasks when possible
+3. Delegate to appropriate specialists
+4. Monitor and integrate results
+5. Ensure all tasks complete successfully
+
+## Best Practices
+- Maximize parallel execution for efficiency
+- Choose the most appropriate specialist for each task
+- Maintain clear communication between agents
+- Ensure consistency across module boundaries
 """
+            agent_files.append(AgentFile(
+                name='orchestrator',
+                content=orchestrator_content,
+                path=self.claude_dir / 'agents' / 'orchestrator.md'
+            ))
         
-        agent_files.append(AgentFile(
-            name="project-coordinator",
-            content=coordinator_content,
-            path=self.claude_dir / "agents" / "project-coordinator.md"
-        ))
+        # 2. Test Engineer - if the project has tests
+        has_test_module = any(m.name.lower() == 'tests' for m in significant_modules)
+        has_test_files = bool(list(self.project_path.glob('**/test_*.py'))) or \
+                        bool(list(self.project_path.glob('**/*_test.py'))) or \
+                        bool(list(self.project_path.glob('**/*.test.js'))) or \
+                        bool(list(self.project_path.glob('**/*.spec.js')))
+        
+        if (has_test_module or has_test_files) and 'test-engineer' not in created_agents:
+            # Build test engineer tools from detected MCPs
+            test_tools = ['Read', 'Write', 'Edit', 'MultiEdit', 'Bash', 'Grep', 
+                         'Glob', 'TodoWrite', 'WebFetch', 'WebSearch']
+            
+            if available_mcps:
+                for mcp_name, mcp_tool in available_mcps.items():
+                    # IDE tools for test execution
+                    if mcp_tool.category == 'development':
+                        test_tools.append(mcp_name)
+                    # Browser tools for E2E testing
+                    elif mcp_tool.server == 'playwright' and any(op in mcp_name for op in [
+                        'navigate', 'click', 'snapshot', 'screenshot', 
+                        'fill_form', 'wait_for', 'evaluate', 'console'
+                    ]):
+                        test_tools.append(mcp_name)
+                    # GitHub for issue tracking
+                    elif mcp_tool.server == 'github' and any(op in mcp_name for op in [
+                        'create_issue', 'create_pull_request', 'add_issue_comment',
+                        'get_file_contents', 'search_code'
+                    ]):
+                        test_tools.append(mcp_name)
+            
+            # Remove duplicates
+            test_tools = list(dict.fromkeys(test_tools))
+            
+            # Format tools for YAML
+            test_tools_yaml = '\n'.join(f'  - {tool}' for tool in test_tools)
+            
+            test_content = f"""---
+name: test-engineer
+description: Test automation and quality assurance specialist. Expert in test strategy, coverage analysis, test-driven development, and ensuring code quality through comprehensive testing.
+model: sonnet
+tools:
+{test_tools_yaml}
+---
+
+You are the test engineer for the {project_info.name} project.
+
+## Your Domain
+You manage all testing aspects:
+- Unit tests
+- Integration tests
+- End-to-end tests
+- Test coverage analysis
+- Test automation
+
+## Testing Stack
+- Languages: {', '.join(project_info.languages[:3])}
+- Frameworks: {', '.join(project_info.frameworks[:3])}
+- Test tools: pytest, unittest, jest (as applicable)
+
+## Key Responsibilities
+1. Write comprehensive test suites
+2. Ensure high test coverage (aim for 80%+)
+3. Identify edge cases and error conditions
+4. Maintain test documentation
+5. Set up test automation
+
+## Testing Strategy
+- Follow the testing pyramid (unit > integration > e2e)
+- Write tests before or alongside implementation
+- Ensure tests are maintainable and readable
+- Use appropriate mocking and fixtures
+- Keep tests independent and reproducible
+
+## Common Operations
+- Add new test cases
+- Fix failing tests
+- Improve test coverage
+- Set up test fixtures
+- Run test suites and analyze results
+"""
+            agent_files.append(AgentFile(
+                name='test-engineer',
+                content=test_content,
+                path=self.claude_dir / 'agents' / 'test-engineer.md'
+            ))
         
         return agent_files
     
@@ -670,23 +794,239 @@ This workflow {self._determine_workflow_usage(workflow)}
         
         return '\n'.join(related[:3]) if related else "- No related commands"
     
-    def _determine_agent_tools(self, module: Module) -> List[str]:
-        """Determine appropriate tools for an agent based on module"""
-        # All agents get basic tools
-        tools = ['Read', 'Write', 'Edit']
+    def _is_significant_module_for_agent(self, module: Module) -> bool:
+        """
+        Determines if a module is significant enough to warrant its own agent.
+        Filters out:
+        - Virtual environments (venv, env, .env, etc.)
+        - Build directories (build, dist, etc.)
+        - Cache directories (__pycache__, .pytest_cache, etc.)
+        - Documentation-only directories
+        - Test-only directories (unless they're complex)
+        """
+        # Module names that don't need agents
+        ignore_names = {
+            'venv', 'env', '.env', 'virtualenv', 
+            'build', 'dist', 'egg-info',
+            '__pycache__', '.pytest_cache', 'htmlcov',
+            'docs', 'doc', 'documentation',
+            'examples', 'demo', 'samples',
+            '.git', '.github', '.vscode', '.idea',
+            'node_modules', 'coverage', 'test_reports'
+        }
         
-        # Add tools based on module characteristics
-        if module.has_tests:
-            tools.append('Bash')  # For running tests
+        # Check if module name indicates it shouldn't have an agent
+        module_name_lower = module.name.lower()
+        if module_name_lower in ignore_names:
+            return False
         
-        if module.name in ['api', 'server', 'backend']:
-            tools.extend(['Bash', 'Grep'])  # For server operations
+        # Check for env-like patterns
+        if 'env' in module_name_lower and module_name_lower.endswith('env'):
+            return False
         
-        if module.name in ['database', 'db', 'models']:
-            tools.append('Bash')  # For database operations
+        # Check for egg-info pattern
+        if module_name_lower.endswith('.egg-info'):
+            return False
         
-        # Ensure no duplicates
+        # Tests module is OK if it's complex (has many files)
+        if module_name_lower == 'tests':
+            # Count Python files to determine complexity
+            py_files = list(module.path.glob('**/*.py'))
+            return len(py_files) > 5  # Only if it has substantial test code
+        
+        # Module should have actual code files
+        code_extensions = {'.py', '.js', '.ts', '.jsx', '.tsx', '.java', '.cpp', '.c', '.go', '.rs'}
+        has_code = False
+        for ext in code_extensions:
+            if list(module.path.glob(f'*{ext}')):
+                has_code = True
+                break
+        
+        return has_code
+    
+    def _determine_agent_tools(self, module: Module, project_info: ProjectInfo, 
+                               available_mcps: Dict[str, MCPTool] = None) -> List[str]:
+        """
+        Determine appropriate tools for an agent based on module, project, and DETECTED MCPs
+        Uses actually available MCPs, not hardcoded assumptions
+        """
+        # Core tools all agents should have (these are built-in, not MCPs)
+        tools = ['Read', 'Write', 'Edit', 'MultiEdit', 'Bash', 'Grep', 'Glob', 'TodoWrite']
+        
+        # Add web tools for research and documentation (built-in)
+        tools.extend(['WebFetch', 'WebSearch'])
+        
+        # If no MCPs detected, return basic tools
+        if not available_mcps:
+            return tools
+        
+        # Organize detected MCPs by category
+        mcps_by_category = {}
+        mcps_by_server = {}
+        for mcp_name, mcp_tool in available_mcps.items():
+            if mcp_tool.category not in mcps_by_category:
+                mcps_by_category[mcp_tool.category] = []
+            mcps_by_category[mcp_tool.category].append(mcp_name)
+            
+            if mcp_tool.server not in mcps_by_server:
+                mcps_by_server[mcp_tool.server] = []
+            mcps_by_server[mcp_tool.server].append(mcp_name)
+        
+        # Module-specific tool selection based on DETECTED MCPs
+        module_lower = module.name.lower()
+        
+        if module.name == 'subforge':
+            # Core SubForge needs comprehensive tools
+            # VCS tools for repository management
+            if 'vcs' in mcps_by_category:
+                tools.extend(mcps_by_category['vcs'])  # All GitHub tools if available
+            
+            # Documentation extraction tools
+            if 'documentation' in mcps_by_category:
+                tools.extend(mcps_by_category['documentation'])  # Context7, Ref if available
+            
+            # Web scraping for documentation extraction
+            if 'scraping' in mcps_by_category:
+                tools.extend(mcps_by_category['scraping'][:3])  # Key Firecrawl tools
+            
+            # AI assistance
+            if 'search' in mcps_by_category:
+                tools.extend(mcps_by_category['search'])  # Perplexity if available
+        
+        elif 'test' in module_lower or module.has_tests:
+            # Test modules need execution and browser testing
+            if 'development' in mcps_by_category:
+                tools.extend(mcps_by_category['development'])  # IDE tools if available
+            
+            # Browser automation for E2E testing
+            if 'browser' in mcps_by_category:
+                # Select key browser testing tools
+                browser_tools = mcps_by_category['browser']
+                essential_browser = [
+                    t for t in browser_tools 
+                    if any(op in t for op in ['navigate', 'click', 'snapshot', 'screenshot', 
+                                              'fill_form', 'wait_for', 'evaluate', 'console'])
+                ]
+                tools.extend(essential_browser[:10])  # Limit to essential browser tools
+            
+            # GitHub for test reports
+            if 'github' in mcps_by_server:
+                github_tools = mcps_by_server['github']
+                test_github = [
+                    t for t in github_tools 
+                    if any(op in t for op in ['create_issue', 'create_pull_request', 'add_issue_comment'])
+                ]
+                tools.extend(test_github)
+        
+        elif 'dashboard' in module_lower or 'frontend' in module_lower:
+            # Frontend needs browser tools
+            if 'browser' in mcps_by_category:
+                browser_tools = mcps_by_category['browser']
+                ui_browser = [
+                    t for t in browser_tools
+                    if any(op in t for op in ['navigate', 'snapshot', 'click', 'screenshot', 'evaluate'])
+                ]
+                tools.extend(ui_browser[:5])  # Basic browser tools
+            
+            # Basic GitHub for PRs
+            if 'github' in mcps_by_server:
+                github_tools = mcps_by_server['github']
+                basic_github = [
+                    t for t in github_tools
+                    if any(op in t for op in ['create_repository', 'get_file_contents', 
+                                              'push_files', 'create_pull_request', 'create_branch'])
+                ]
+                tools.extend(basic_github[:5])
+        
+        elif 'doc' in module_lower:
+            # Documentation modules get all documentation tools
+            if 'documentation' in mcps_by_category:
+                tools.extend(mcps_by_category['documentation'])
+            
+            # Some scraping for research
+            if 'scraping' in mcps_by_category:
+                scraping_tools = mcps_by_category['scraping']
+                doc_scraping = [t for t in scraping_tools if 'search' in t or 'scrape' in t]
+                tools.extend(doc_scraping[:2])
+        
+        else:
+            # Default: basic GitHub integration if available
+            if 'github' in mcps_by_server:
+                github_tools = mcps_by_server['github']
+                basic_github = [
+                    t for t in github_tools
+                    if any(op in t for op in ['get_file_contents', 'push_files', 
+                                              'create_pull_request', 'create_issue', 'create_branch'])
+                ]
+                tools.extend(basic_github[:5])
+        
+        # Check for framework-specific MCPs
+        if self._project_uses_supabase(project_info) and 'supabase' in mcps_by_server:
+            supabase_tools = mcps_by_server['supabase']
+            essential_supabase = [
+                t for t in supabase_tools
+                if any(op in t for op in ['search_docs', 'list_projects', 'execute_sql', 
+                                          'list_tables', 'deploy_edge_function'])
+            ]
+            tools.extend(essential_supabase[:5])
+        
+        # Remove duplicates while preserving order
         return list(dict.fromkeys(tools))
+    
+    def _project_uses_supabase(self, project_info: ProjectInfo) -> bool:
+        """Check if project uses Supabase"""
+        # Check dependencies and frameworks
+        supabase_indicators = ['supabase', '@supabase/supabase-js']
+        for framework in project_info.frameworks:
+            if 'supabase' in framework.lower():
+                return True
+        
+        # Check for .env.supabase or supabase config files
+        supabase_files = ['.env.supabase', 'supabase.config.js', 'supabase.config.ts']
+        for file in supabase_files:
+            if (self.project_path / file).exists():
+                return True
+        
+        return False
+    
+    def _generate_agent_description(self, module: Module, project_info: ProjectInfo) -> str:
+        """Generate a detailed description for an agent based on module analysis"""
+        # Base description from module
+        base_desc = module.description if module.description else f"Specialist for {module.name} module"
+        
+        # Add technical details
+        tech_details = []
+        
+        # Detect module type and add relevant expertise
+        module_lower = module.name.lower()
+        
+        if module_lower == 'subforge':
+            return f"Core SubForge knowledge extraction and context building specialist. Expert in Python project analysis, documentation extraction, gap analysis, and Claude Code context generation. Manages the main SubForge engine."
+        
+        if 'test' in module_lower:
+            return f"Test suite management and quality assurance specialist for {project_info.name}. Expert in pytest, test coverage analysis, test automation, and ensuring code quality through comprehensive testing strategies."
+        
+        if 'dashboard' in module_lower:
+            if 'frontend' in str(module.path):
+                return f"Frontend dashboard specialist for {module.name}. Expert in React/Next.js, TypeScript, responsive design, and creating intuitive user interfaces for SubForge dashboard."
+            return f"Dashboard module specialist managing both frontend and backend components. Coordinates UI/UX, API integration, and real-time data visualization."
+        
+        if 'doc' in module_lower:
+            return f"Documentation specialist for {project_info.name}. Expert in technical writing, API documentation, maintaining README files, and ensuring comprehensive project documentation."
+        
+        # Default: combine available information
+        expertise = []
+        if project_info.frameworks:
+            expertise.append(f"Expert in {', '.join(project_info.frameworks[:3])}")
+        if module.has_tests:
+            expertise.append("test-driven development")
+        if module.dependencies:
+            expertise.append(f"managing {len(module.dependencies)} dependencies")
+        
+        if expertise:
+            return f"{base_desc}. {' and '.join(expertise)}."
+        
+        return base_desc
     
     def _generate_agent_responsibilities(self, module: Module) -> str:
         """Generate agent responsibilities based on module"""

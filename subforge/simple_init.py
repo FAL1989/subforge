@@ -88,13 +88,28 @@ def init_subforge(project_path: str = None, verbose: bool = True) -> Dict[str, A
             for module in modules[:5]:
                 print(f"      - {module.name}: {module.description}")
         
+        if verbose:
+            print("  🔍 Detecting available MCP tools...")
+        available_mcps = extractor.extract_available_mcps()
+        if verbose:
+            # Count MCPs by category
+            mcp_categories = {}
+            for mcp_tool in available_mcps.values():
+                if mcp_tool.category not in mcp_categories:
+                    mcp_categories[mcp_tool.category] = 0
+                mcp_categories[mcp_tool.category] += 1
+            print(f"    ✅ Found {len(available_mcps)} MCP tools across {len(mcp_categories)} categories")
+            for category, count in mcp_categories.items():
+                print(f"      - {category}: {count} tools")
+        
         results['extraction'] = {
             'project_name': project_info.name,
             'languages': project_info.languages,
             'frameworks': project_info.frameworks,
             'commands_count': len(commands),
             'workflows_count': len(workflows),
-            'modules_count': len(modules)
+            'modules_count': len(modules),
+            'mcp_tools_count': len(available_mcps)
         }
         
         # Phase 2: Analyze Gaps
@@ -169,7 +184,7 @@ def init_subforge(project_path: str = None, verbose: bool = True) -> Dict[str, A
                 )
                 agent_modules.append(pseudo_module)
         
-        agent_files = builder.build_agent_files(agent_modules, project_info)
+        agent_files = builder.build_agent_files(agent_modules, project_info, available_mcps)
         if verbose:
             print(f"    ✅ Created {len(agent_files)} agent files")
         

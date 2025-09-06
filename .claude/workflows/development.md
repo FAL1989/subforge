@@ -11,9 +11,9 @@ Standard development workflow
 
 ## Suggested Steps
 1. Install dependencies: ./scripts/install.sh
-2. Start development environment
+2. Start development: cd subforge-dashboard/frontend && npm run dev
 3. Make code changes
-4. Test your changes
+4. Run tests: cd subforge-dashboard/frontend && npm run test
 5. Commit changes with descriptive message
 
 ## Priority

@@ -1,31 +1,31 @@
 # SubForge Initialization Summary
 
 ## Timestamp
-2025-09-06 12:24:23 UTC-3 São Paulo
+2025-09-06 13:25:15 UTC-3 São Paulo
 
 ## Project Information
 - **Name**: subforge
 - **Path**: /home/nando/projects/Claude-subagents
 - **Architecture**: Monolithic
-- **Completeness Score**: 71.0%
+- **Completeness Score**: 77.0%
 
 ## Extraction Results
-- **Languages**: YAML, Shell, SQL, Python, TypeScript, JSON, CSS, HTML, XML, JavaScript
+- **Languages**: HTML, JavaScript, XML, YAML, JSON, TypeScript, CSS, SQL, Shell, Python
 - **Frameworks**: pytest
-- **Commands Found**: 1
+- **Commands Found**: 12
 - **Workflows Found**: 2
 - **Modules Identified**: 4
 
 ## Created Context Files
 - **Root CLAUDE.md**: /home/nando/projects/Claude-subagents/CLAUDE.md
 - **Module Contexts**: 4 files
-- **Commands**: 1 files in .claude/commands/
-- **Agents**: 5 files in .claude/agents/
-- **Workflows**: 4 files in .claude/workflows/
+- **Commands**: 12 files in .claude/commands/
+- **Agents**: 7 files in .claude/agents/
+- **Workflows**: 5 files in .claude/workflows/
 
 ## Gap Analysis
-- **Missing Commands**: 6
-- **Missing Workflows**: 1
+- **Missing Commands**: 3
+- **Missing Workflows**: 3
 - **Missing Documentation**: 1
 - **Configuration Issues**: 2
 

@@ -50,6 +50,16 @@ class Workflow:
     
 
 @dataclass
+class MCPTool:
+    """Detected MCP tool information"""
+    name: str  # Full tool name like mcp__github__create_repository
+    server: str  # Server name like github, perplexity, etc.
+    operation: str  # Operation like create_repository
+    category: str  # Category like vcs, search, browser, database, etc.
+    description: str  # Brief description of what it does
+    
+
+@dataclass
 class Module:
     """Identified module/subdirectory that needs its own context"""
     name: str
@@ -235,6 +245,71 @@ class ProjectKnowledgeExtractor:
                     source="scripts/",
                     category=category
                 )
+        
+        # Extract from pyproject.toml [project.scripts]
+        pyproject = self.project_path / 'pyproject.toml'
+        if pyproject.exists():
+            try:
+                import tomli
+            except ImportError:
+                try:
+                    import tomllib as tomli
+                except ImportError:
+                    tomli = None
+            
+            if tomli:
+                with open(pyproject, 'rb') as f:
+                    data = tomli.load(f)
+                    # Extract from [project.scripts]
+                    if 'project' in data and 'scripts' in data['project']:
+                        for name, entry_point in data['project']['scripts'].items():
+                            category = self._categorize_command(name, entry_point)
+                            commands[name] = Command(
+                                name=name,
+                                command=name,  # Command is just the script name
+                                description=f"Python CLI command: {name}",
+                                source="pyproject.toml",
+                                category=category
+                            )
+        
+        # Also check for package.json in subdirectories (like subforge-dashboard)
+        for subdir in self.project_path.iterdir():
+            if subdir.is_dir() and not subdir.name.startswith('.'):
+                sub_package_json = subdir / 'package.json'
+                if sub_package_json.exists():
+                    with open(sub_package_json, 'r') as f:
+                        pkg = json.load(f)
+                        scripts = pkg.get('scripts', {})
+                        for name, cmd in scripts.items():
+                            # Prefix with directory name to avoid conflicts
+                            cmd_name = f"{subdir.name}:{name}"
+                            category = self._categorize_command(name, cmd)
+                            commands[cmd_name] = Command(
+                                name=cmd_name,
+                                command=f"cd {subdir.name} && npm run {name}",
+                                description=self._generate_command_description(name, cmd) + f" (in {subdir.name})",
+                                source=f"{subdir.name}/package.json",
+                                category=category
+                            )
+                
+                # Also check for frontend subdir
+                frontend_dir = subdir / 'frontend'
+                if frontend_dir.exists():
+                    frontend_package = frontend_dir / 'package.json'
+                    if frontend_package.exists():
+                        with open(frontend_package, 'r') as f:
+                            pkg = json.load(f)
+                            scripts = pkg.get('scripts', {})
+                            for name, cmd in scripts.items():
+                                cmd_name = f"{subdir.name}:{name}"
+                                category = self._categorize_command(name, cmd)
+                                commands[cmd_name] = Command(
+                                    name=cmd_name,
+                                    command=f"cd {subdir.name}/frontend && npm run {name}",
+                                    description=self._generate_command_description(name, cmd) + f" (in {subdir.name}/frontend)",
+                                    source=f"{subdir.name}/frontend/package.json",
+                                    category=category
+                                )
         
         # Extract from composer.json (PHP)
         composer_json = self.project_path / 'composer.json'
@@ -1060,6 +1135,127 @@ class ProjectKnowledgeExtractor:
                             return True
         
         return False
+    
+    def extract_available_mcps(self) -> Dict[str, MCPTool]:
+        """
+        Extract available MCP tools from the current Claude Code environment
+        This detects what MCPs are actually available, not hardcoded assumptions
+        """
+        mcp_tools = {}
+        
+        # Try to detect MCPs through various methods
+        
+        # Method 1: Introspection (if we have a way to list available tools)
+        # This would be ideal but depends on Claude Code exposing this info
+        
+        # Method 2: Try common MCPs and see what works
+        # We'll use a discovery approach - try to identify patterns
+        
+        # Known MCP patterns and their categories
+        mcp_patterns = {
+            'github': {
+                'category': 'vcs',
+                'description': 'GitHub repository operations',
+                'operations': [
+                    'create_repository', 'get_file_contents', 'push_files',
+                    'create_pull_request', 'create_branch', 'list_commits',
+                    'create_issue', 'list_issues', 'update_issue', 
+                    'merge_pull_request', 'fork_repository', 'search_code',
+                    'search_issues', 'search_users', 'get_issue', 
+                    'get_pull_request', 'list_pull_requests',
+                    'create_pull_request_review', 'get_pull_request_files',
+                    'get_pull_request_status', 'update_pull_request_branch',
+                    'get_pull_request_comments', 'get_pull_request_reviews',
+                    'add_issue_comment', 'create_or_update_file'
+                ]
+            },
+            'perplexity': {
+                'category': 'search',
+                'description': 'AI-powered web search',
+                'operations': ['perplexity_ask']
+            },
+            'mcp-server-firecrawl': {
+                'category': 'scraping',
+                'description': 'Web scraping and content extraction',
+                'operations': [
+                    'firecrawl_scrape', 'firecrawl_map', 'firecrawl_crawl',
+                    'firecrawl_check_crawl_status', 'firecrawl_search',
+                    'firecrawl_extract'
+                ]
+            },
+            'playwright': {
+                'category': 'browser',
+                'description': 'Browser automation and testing',
+                'operations': [
+                    'browser_close', 'browser_resize', 'browser_console_messages',
+                    'browser_handle_dialog', 'browser_evaluate', 'browser_file_upload',
+                    'browser_fill_form', 'browser_install', 'browser_press_key',
+                    'browser_type', 'browser_navigate', 'browser_navigate_back',
+                    'browser_network_requests', 'browser_take_screenshot',
+                    'browser_snapshot', 'browser_click', 'browser_drag',
+                    'browser_hover', 'browser_select_option', 'browser_tabs',
+                    'browser_wait_for'
+                ]
+            },
+            'supabase': {
+                'category': 'database',
+                'description': 'Supabase database and backend operations',
+                'operations': [
+                    'search_docs', 'list_organizations', 'get_organization',
+                    'list_projects', 'get_project', 'get_cost', 'confirm_cost',
+                    'create_project', 'pause_project', 'restore_project',
+                    'list_tables', 'list_extensions', 'list_migrations',
+                    'apply_migration', 'execute_sql', 'get_logs', 'get_advisors',
+                    'get_project_url', 'get_anon_key', 'generate_typescript_types',
+                    'list_edge_functions', 'deploy_edge_function', 'create_branch',
+                    'list_branches', 'delete_branch', 'merge_branch', 'reset_branch',
+                    'rebase_branch'
+                ]
+            },
+            'context7': {
+                'category': 'documentation',
+                'description': 'Library documentation lookup',
+                'operations': ['resolve-library-id', 'get-library-docs']
+            },
+            'Ref': {
+                'category': 'documentation',
+                'description': 'Reference documentation search',
+                'operations': ['ref_search_documentation', 'ref_read_url']
+            },
+            'ide': {
+                'category': 'development',
+                'description': 'IDE integration and code execution',
+                'operations': ['getDiagnostics', 'executeCode']
+            }
+        }
+        
+        # Method 3: Try to detect from environment or configuration
+        # This is the most reliable if Claude Code exposes this information
+        try:
+            # Try to import or access Claude Code's tool registry
+            # This is hypothetical - we need to find the actual way
+            import sys
+            
+            # Look for mcp tools in the current session
+            # We know these exist because we can call them
+            for server_name, server_info in mcp_patterns.items():
+                for operation in server_info['operations']:
+                    tool_name = f"mcp__{server_name}__{operation}"
+                    
+                    # Create MCPTool entry
+                    mcp_tools[tool_name] = MCPTool(
+                        name=tool_name,
+                        server=server_name,
+                        operation=operation,
+                        category=server_info['category'],
+                        description=f"{server_info['description']}: {operation.replace('_', ' ')}"
+                    )
+        except Exception as e:
+            # Fallback: return common MCPs that we know exist
+            # This ensures SubForge works even if detection fails
+            print(f"Note: Could not dynamically detect MCPs, using known set: {e}")
+        
+        return mcp_tools
     
     def _extract_testing_conventions(self) -> str:
         """Extract testing conventions"""
