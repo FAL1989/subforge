@@ -8,14 +8,14 @@ __description__ = "AI-powered subagent factory for Claude Code developers"
 __license__ = "MIT"
 
 # Core imports for easier access
-from .core.project_analyzer import ProjectAnalyzer
-from .core.validation_engine import ValidationEngine
-from .core.workflow_orchestrator import WorkflowOrchestrator
+from .core.knowledge_extractor import ProjectKnowledgeExtractor
+from .core.context_builder import ContextBuilder
+from .core.gap_analyzer import GapAnalyzer
 
 __all__ = [
-    "ProjectAnalyzer",
-    "WorkflowOrchestrator",
-    "ValidationEngine",
+    "ProjectKnowledgeExtractor",
+    "ContextBuilder",
+    "GapAnalyzer",
     "__version__",
     "__author__",
     "__description__",

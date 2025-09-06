@@ -1,7 +1,7 @@
-# subforge-dashboard Module
+# tests Module
 
 ## Overview
-subforge-dashboard module
+Test suites and testing utilities
 
 ## Module Context
 This module is part of the subforge project.
@@ -37,5 +37,5 @@ Follow project-wide conventions from root CLAUDE.md
 - This module has its own test suite
 
 ---
-*Module context for subforge-dashboard*
+*Module context for tests*
 *Part of subforge project*

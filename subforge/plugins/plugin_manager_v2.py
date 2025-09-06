@@ -315,8 +315,11 @@ class PluginManagerV2:
                         return False
 
             # Use lifecycle manager for installation
-            loop = self._get_event_loop()
-            success = loop.run_until_complete(self.plugin_lifecycle.install(plugin, name))
+            # Create a new thread to run the async operation to avoid event loop conflicts
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(asyncio.run, self.plugin_lifecycle.install(plugin, name))
+                success = future.result()
 
             if success:
                 # Register plugin locally
@@ -331,7 +334,9 @@ class PluginManagerV2:
 
                 # Auto-activate if configured
                 if self.config.auto_activate:
-                    loop.run_until_complete(self.plugin_lifecycle.activate(name))
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(asyncio.run, self.plugin_lifecycle.activate(name))
+                        future.result()
 
                 # Register in DI container for future dependency injection
                 self.container.register_instance(type(plugin), plugin)

@@ -12,7 +12,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from subforge.core.context.exceptions import SubForgeError
+from subforge.core.context.exceptions import ContextError
 from subforge.plugins.config import PluginConfig
 from subforge.plugins.plugin_manager import PluginMetadata, SubForgePlugin
 
@@ -72,7 +72,7 @@ class PluginStateInfo:
     health_check_passed: bool = False
 
 
-class PluginLifecycleError(SubForgeError):
+class PluginLifecycleError(ContextError):
     """Raised for plugin lifecycle errors"""
 
 

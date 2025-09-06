@@ -5,15 +5,15 @@ Manages plugin dependencies and compatibility checking
 
 import re
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from packaging import version
 
-from subforge.core.context.exceptions import SubForgeError
+from subforge.core.context.exceptions import ContextError
 from subforge.plugins.plugin_manager import PluginMetadata
 
 
-class DependencyError(SubForgeError):
+class DependencyError(ContextError):
     """Raised for dependency-related errors"""
 
 

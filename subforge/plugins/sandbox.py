@@ -13,7 +13,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Set
 
-from subforge.core.context.exceptions import SubForgeError
+from subforge.core.context.exceptions import ContextError as SubForgeError
 from subforge.plugins.config import PluginPermission, PluginSecurityConfig
 from subforge.plugins.plugin_manager import SubForgePlugin
 

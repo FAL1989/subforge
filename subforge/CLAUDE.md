@@ -1,7 +1,7 @@
-# subforge-dashboard Module
+# subforge Module
 
 ## Overview
-subforge-dashboard module
+subforge module
 
 ## Module Context
 This module is part of the subforge project.
@@ -9,7 +9,7 @@ This module is part of the subforge project.
 ## Structure
 
 ### Key Files
-- No key files identified
+- `__init__.py`
 
 ### Dependencies
 No specific dependencies
@@ -23,7 +23,6 @@ Run project tests that cover this module
 Follow project-wide conventions from root CLAUDE.md
 
 ### Common Tasks
-- Run module tests
 - Add new features
 - Fix bugs
 - Refactor code
@@ -34,8 +33,8 @@ Follow project-wide conventions from root CLAUDE.md
 - See project architecture for details
 
 ## Development Notes
-- This module has its own test suite
+- Follow project-wide development guidelines
 
 ---
-*Module context for subforge-dashboard*
+*Module context for subforge*
 *Part of subforge project*

@@ -8,10 +8,10 @@ from abc import ABC
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, Optional, Type, get_type_hints
 
-from subforge.core.context.exceptions import SubForgeError
+from subforge.core.context.exceptions import ContextError
 
 
-class DIContainerError(SubForgeError):
+class DIContainerError(ContextError):
     """Raised for DI container related errors"""
 
 
@@ -229,6 +229,10 @@ class DIContainer:
                             f"Cannot resolve dependency {param_name}: {param_type} "
                             f"for {cls.__name__}"
                         )
+            else:
+                # No type hint - use default value if available
+                if param.default != inspect.Parameter.empty:
+                    kwargs[param_name] = param.default
 
         return cls(**kwargs)
 
